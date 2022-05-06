@@ -9,7 +9,7 @@ export default function InviteeDetails({ data }) {
 export async function getStaticProps(context) {
   const { params } = context;
   const { data } = await axios(
-    `http://localhost:3000/api/v1/invites?user_id=${params?.user_id}`
+    `https://crm-linkedin-mmt-nxt.vercel.app/api/v1/invites?user_id=${params?.user_id}`
   );
   return {
     props: {
@@ -21,7 +21,7 @@ export async function getStaticProps(context) {
 export async function getStaticPaths() {
   const {
     data: { data: invites },
-  } = await axios("http://localhost:3000/api/v1/invites");
+  } = await axios("https://crm-linkedin-mmt-nxt.vercel.app/api/v1/invites");
 
   const paths = invites?.map((invite) => {
     return {
