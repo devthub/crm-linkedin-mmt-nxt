@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-// import Link from "next/link";
 import { Dialog } from "primereact/dialog";
 
 import { DataTable } from "primereact/datatable";
@@ -25,6 +24,7 @@ export default function Invites({ invites }) {
   };
   useEffect(() => {
     getAllInvites();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onRowSelect = (event) => {
@@ -70,7 +70,6 @@ export default function Invites({ invites }) {
         throw new Error("Could not find data.");
       }
 
-      setResponseData({ ...data });
       showMessageToast({
         severity: "success",
         summary: "Success:",
@@ -126,6 +125,7 @@ export default function Invites({ invites }) {
           dataKey="id"
           responsiveLayout="scroll"
           onRowSelect={onRowSelect}
+          emptyMessage="Loading..."
         >
           <Column field="first_name" sortable header="First Name"></Column>
           <Column field="last_name" sortable header="Last Name"></Column>
