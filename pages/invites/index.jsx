@@ -137,7 +137,7 @@ export default function Invites({ invites }) {
 export async function getStaticProps() {
   const {
     data: { data: invites },
-  } = await axios("http://localhost:3000/api/v1/invites");
+  } = await axios("https://crm-linkedin-mmt-nxt.vercel.app/api/v1/invites");
 
   return {
     props: {
