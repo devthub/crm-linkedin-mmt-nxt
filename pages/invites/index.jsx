@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 // import Link from "next/link";
 import { Dialog } from "primereact/dialog";
@@ -9,11 +9,24 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
 export default function Invites({ invites }) {
+  const [invitesData, setInvitesData] = useState({});
   const [selectedInvitee, setSelectedInvitee] = useState(null);
   const [showInviteeDetailsModal, setShowInviteeDetailsModal] = useState(false);
 
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
+
+  const getAllInvites = async () => {
+    const {
+      data: { data: invites },
+    } = await axios("/api/v1/invites");
+    console.log("invites", invites);
+    setInvitesData(invites);
+    return invites;
+  };
+  useEffect(() => {
+    getAllInvites();
+  }, []);
 
   const onRowSelect = (event) => {
     setShowInviteeDetailsModal(true);
@@ -76,7 +89,7 @@ export default function Invites({ invites }) {
     }
   };
 
-  console.log("invites :>> ", invites);
+  console.log("invitesData :>> ", invitesData);
 
   return (
     <>
@@ -105,7 +118,8 @@ export default function Invites({ invites }) {
 
       <div className="card">
         <DataTable
-          value={invites}
+          // value={invites}
+          value={invitesData && invitesData}
           stripedRows
           selectionMode="single"
           selection={selectedInvitee}
@@ -134,14 +148,14 @@ export default function Invites({ invites }) {
   );
 }
 
-export async function getStaticProps() {
-  const {
-    data: { data: invites },
-  } = await axios("https://crm-linkedin-mmt-nxt.vercel.app/api/v1/invites");
+// export async function getStaticProps() {
+//   const {
+//     data: { data: invites },
+//   } = await axios("https://crm-linkedin-mmt-nxt.vercel.app/api/v1/invites");
 
-  return {
-    props: {
-      invites,
-    },
-  };
-}
+//   return {
+//     props: {
+//       invites,
+//     },
+//   };
+// }
