@@ -27,6 +27,9 @@ export default function EmailForm() {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { data } = await axios(`/api/v1/lookup?email=${values.email}`);
+      // const {
+      //   data: { data: invites },
+      // } = await axios("/api/v1/invites");
 
       if (Object.keys(data).length === 0) {
         throw new Error("Could not find data.");

@@ -214,3 +214,10 @@ span.flag {
 img.flag {
   width: 30px;
 }
+
+.datatable-selection-demo .card h6 {
+  margin-top: 2rem;
+}
+.datatable-selection-demo .card h6:first-of-type {
+  margin-top: 0;
+}

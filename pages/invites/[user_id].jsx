@@ -1,0 +1,38 @@
+import React from "react";
+import axios from "axios";
+
+export default function InviteeDetails({ data }) {
+  console.log("data :>> ", data);
+  return <div>InviteeDetails</div>;
+}
+
+export async function getStaticProps(context) {
+  const { params } = context;
+  const { data } = await axios(
+    `http://localhost:3000/api/v1/invites?user_id=${params?.user_id}`
+  );
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  const {
+    data: { data: invites },
+  } = await axios("http://localhost:3000/api/v1/invites");
+
+  const paths = invites?.map((invite) => {
+    return {
+      params: {
+        user_id: invite?.li_user_id,
+      },
+    };
+  });
+
+  return {
+    paths,
+    fallback: true, //false or "blocking" // See the "fallback" section below
+  };
+}
