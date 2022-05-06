@@ -17,11 +17,10 @@ export default function Invites({ invites }) {
   const showMessageToast = (props) => toast.current.show({ ...props });
 
   const getAllInvites = async () => {
-    const {
-      data: { data: invites },
-    } = await axios("/api/v1/invites");
-    console.log("invites", invites);
-    setInvitesData(invites);
+    const response = await fetch("/api/v1/invites");
+    const { data } = await response.json();
+    console.log("data", data);
+    setInvitesData(data);
     return invites;
   };
   useEffect(() => {
