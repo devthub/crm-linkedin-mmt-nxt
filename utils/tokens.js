@@ -3,8 +3,8 @@ import { sign, verify } from "jsonwebtoken";
 export const WEEK_IN_MS = parseInt("604800000‬");
 export const MINUTES15 = 900000;
 
-export function createUserToken({ user_id, activation_id }) {
-  return sign({ user_id, activation_id }, process.env.JWT_USER_SECRET, {
+export function createUserToken({ activation_id }) {
+  return sign({ activation_id }, process.env.JWT_USER_SECRET, {
     expiresIn: process.env.USER_TOKEN_EXPIRY,
   });
 }

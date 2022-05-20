@@ -15,24 +15,30 @@ export default function Home({ user }) {
   // active ripple effect
   PrimeReact.ripple = true;
 
+  console.log("Home->>user :>> ", user);
+
   const [visible, setVisible] = useState(false);
   const { userData, setUserData } = useUserContext();
 
   const router = useRouter();
 
   const redirectToUserPage = () => {
-    router.push(`/${userData?.user?.user_id}`);
+    router.push(
+      `/${userData?.user?.user_id}?activation_id=${userData?.user?.activation_id}`
+    );
   };
 
   useEffect(() => {
     setUserData(user);
-  }, [setUserData, user]);
+    setVisible(user.success);
+  }, []);
 
-  if (user) console.log("client->user", user);
+  const clearUserState = () => {
+    setVisible(false);
+    setUserData({ ...userData, rejected: true });
+  };
 
-  console.log("client->>userData :>> ", userData);
-
-  if (userData?.rejected) {
+  if (setUserData.rejected)
     return (
       <>
         <div className={styles.container}>
@@ -42,30 +48,40 @@ export default function Home({ user }) {
         </div>
       </>
     );
-  }
 
   return (
     <>
-      <ConfirmDialog
-        visible={userData?.success || visible}
-        onHide={() => setVisible(false)}
-        message={userData?.user?.email}
-        header="Is this you?"
-        icon="pi pi-exclamation-triangle"
-        accept={redirectToUserPage}
-        reject={() => setUserData({ ...userData, rejected: true })}
-      />
+      <div className={styles.container}>
+        <main className={styles.main}>
+          <ConfirmDialog
+            visible={userData?.success && visible}
+            onHide={clearUserState}
+            message={userData?.user?.email}
+            header="Is this you?"
+            icon="pi pi-exclamation-triangle"
+            accept={redirectToUserPage}
+            reject={clearUserState}
+          />
+          <EmailForm />
+        </main>
+      </div>
     </>
   );
 }
 
 export const getServerSideProps = async (ctx) => {
+  let user = null;
   const { req } = ctx;
   const cookies = req.headers?.cookie?.split("; ");
   const token = extractCookie(cookies, "mmt-crm");
   console.log("index->ssr->token :>> ", token);
 
-  const user = await tradeTokenForUser(token);
+  try {
+    user = await tradeTokenForUser(token);
+  } catch (error) {
+    console.log("error here...");
+    console.error(error);
+  }
 
   return {
     props: {

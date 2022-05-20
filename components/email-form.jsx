@@ -10,7 +10,7 @@ import { classNames } from "primereact/utils";
 import { Toast } from "primereact/toast";
 
 import styles from "./email-form.module.css";
-import { sleep } from "../helpers/common";
+import { useUserContext } from "../contexts/user-provider";
 
 const validationSchema = yup.object({
   email: yup
@@ -20,6 +20,7 @@ const validationSchema = yup.object({
 });
 
 export default function EmailForm() {
+  const { setUserData } = useUserContext();
   const toast = useRef(null);
   const router = useRouter();
 
@@ -34,6 +35,7 @@ export default function EmailForm() {
       }
 
       console.log(data);
+      setUserData(data);
 
       showMessageToast({
         severity: "success",
@@ -42,14 +44,17 @@ export default function EmailForm() {
         life: 3000,
       });
 
-      await sleep(1000);
-      router.push(`/${data?.user_id}`);
+      router.push(
+        `/${data?.user_id}?activation_id=${data?.activation_id}`,
+        undefined,
+        { shallow: true }
+      );
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
       showMessageToast({
         severity: "error",
         summary: "Failed:",
-        detail: error.message,
+        detail: "Could not find activation id",
         life: 3000,
       });
     }
@@ -119,12 +124,6 @@ export default function EmailForm() {
           </div>
         </div>
       </div>
-
-      {/* {Object.keys(userConfig).length !== 0 ? (
-        <CustomMessages responseData={userConfig} />
-      ) : null} */}
-
-      {/* {userConfig && <CustomMessages responseData={userConfig} />} */}
     </>
   );
 }

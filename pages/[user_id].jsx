@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { TabView, TabPanel } from "primereact/tabview";
@@ -7,21 +7,19 @@ import CustomMessages from "../components/custom-messages";
 
 import { extractCookie } from "../helpers/common";
 import tradeTokenForUser from "../helpers/trade-token";
+import { useUserContext } from "../contexts/user-provider";
 
-export default function MMTUserDetails({ userData, userConfig }) {
+export default function MMTUserDetails({ user, userConfig }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  console.log("userConfig :>> ", userConfig);
-  console.log("-[user_id]->>userData :>> ", userData);
 
-  useEffect(() => {
-    if (userData.rejected) {
-      router.push("/");
-    }
-    setIsLoading(false);
-  }, [router, userData]);
+  // React.useEffect(() => {
+  //   if (userData.rejected) {
+  //     router.push("/");
+  //   }
+  // }, [userData.rejected, router]);
 
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
 
   return (
     <>
@@ -29,7 +27,7 @@ export default function MMTUserDetails({ userData, userConfig }) {
         <div className="md:col-12 lg:col-offset-1 lg:col-10">
           <div className="card">
             <h5>
-              Welcome, {userData?.user?.first_name} {userData?.user?.last_name}!
+              Welcome, {user?.first_name} {user?.last_name}!
             </h5>
             <TabView className="tabview-header-icon">
               <TabPanel header="Account" leftIcon="pi pi-cog">
@@ -78,26 +76,26 @@ export default function MMTUserDetails({ userData, userConfig }) {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const { req, query } = ctx;
-  const cookies = req.headers?.cookie?.split("; ");
-  const token = extractCookie(cookies, "mmt-crm");
-  console.log("index->ssr->query :>> ", query);
-
-  const user = await tradeTokenForUser(token);
-  console.log("index->ssr->user.user?.user_id :>> ", user.user?.user_id);
+  let user = null;
   let userConfig = null;
 
-  if (query?.user_id !== user.user?.user_id) {
-    return {
-      props: {
-        userData: { rejected: true, user: null },
-        userConfig,
-      },
-    };
-  }
+  const { req, query } = ctx;
+  // const cookies = req.headers?.cookie?.split("; ");
+  // const token = extractCookie(cookies, "mmt-crm");
+  console.log("index->ssr->query :>> ", query);
 
-  if (user.success) {
-    const mmt2ConfigURI = `https://api.mymosttrusted.net/v1/network/41/config/${user.user?.user_id}`;
+  try {
+    const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${query?.activation_id}`;
+
+    const mmtRecordExists = await fetch(mmtURI, {
+      headers: {
+        Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+      },
+    });
+
+    user = await mmtRecordExists.json();
+
+    const mmt2ConfigURI = `https://api.mymosttrusted.net/v1/network/41/config/${user.data[0]?.user_id}`;
 
     const response = await fetch(mmt2ConfigURI, {
       headers: {
@@ -106,11 +104,41 @@ export const getServerSideProps = async (ctx) => {
     });
 
     userConfig = await response.json();
+  } catch (error) {
+    console.error(error);
   }
+
+  // const user = await mmtRecordExists.json();
+
+  console.log("user?.data :>> ", user?.data);
+
+  // const user = await tradeTokenForUser(token);
+  // console.log("index->ssr->user.user?.user_id :>> ", user.user?.user_id);
+
+  // if (query?.user_id !== user.user?.user_id) {
+  //   return {
+  //     props: {
+  //       userData: { rejected: true, user: null },
+  //       userConfig,
+  //     },
+  //   };
+  // }
+
+  // if (user) {
+  //   const mmt2ConfigURI = `https://api.mymosttrusted.net/v1/network/41/config/${user.data[0]?.user_id}`;
+
+  //   const response = await fetch(mmt2ConfigURI, {
+  //     headers: {
+  //       Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+  //     },
+  //   });
+
+  //   userConfig = await response.json();
+  // }
 
   return {
     props: {
-      userData: user,
+      user: user?.data[0],
       userConfig,
     },
   };
