@@ -25,7 +25,7 @@ export default function CustomMessages({ responseData }) {
     setUser_id(responseData?.user_id);
     setDefaultPayload((prev) => ({
       ...prev,
-      ...responseData.payload,
+      ...responseData,
     }));
   }, [responseData]);
 
@@ -101,10 +101,10 @@ export default function CustomMessages({ responseData }) {
       <Dialog
         header={`Edit ${selectedMessage?.title}?`}
         visible={showEditor}
-        style={{ width: "80vw" }}
+        style={{ width: "95vw" }}
         footer={editorFooter}
         onHide={onHideEditor}
-        dismissableMask
+        // dismissableMask
       >
         <div>
           <div className="card">
@@ -118,7 +118,7 @@ export default function CustomMessages({ responseData }) {
       </Dialog>
 
       <div className="grid">
-        <div className="col-12 md:col-offset-2 md:col-4">
+        <div className="col-12 lg:col-6">
           <CustomMessageContainer
             title="Invitation Message"
             body={defaultPayload?.invitation_message}
@@ -128,7 +128,7 @@ export default function CustomMessages({ responseData }) {
           />
         </div>
 
-        <div className="col-12 md:col-4">
+        <div className="col-12 lg:col-6">
           <CustomMessageContainer
             title="Acceptance Message"
             body={defaultPayload?.acceptance_message}
@@ -138,7 +138,7 @@ export default function CustomMessages({ responseData }) {
           />
         </div>
 
-        <div className="col-12 md:col-offset-2 md:col-4">
+        <div className="lg:col-6">
           <CustomMessageContainer
             title="Custom Message 1"
             body={defaultPayload?.custom_message1}
@@ -148,7 +148,7 @@ export default function CustomMessages({ responseData }) {
           />
         </div>
 
-        <div className="col-12 md:col-4">
+        <div className="col-12 lg:col-6">
           <CustomMessageContainer
             title="Custom Message 2"
             body={defaultPayload?.custom_message2}

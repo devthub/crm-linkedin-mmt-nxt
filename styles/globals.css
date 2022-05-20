@@ -221,3 +221,7 @@ img.flag {
 .datatable-selection-demo .card h6:first-of-type {
   margin-top: 0;
 }
+
+.p-tabview-title {
+  margin-left: 0.5em;
+}

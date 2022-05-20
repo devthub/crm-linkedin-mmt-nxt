@@ -1,28 +1,36 @@
 import axios from "axios";
+import { serialize } from "cookie";
+import { setAccessToken } from "../../../globals/auth";
+import cookies from "../../../utils/cookies";
+import { createUserToken } from "../../../utils/tokens";
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const { query } = req;
+
+  const cookieFound = res.getHeader("Set-Cookie");
+  console.log("login->cookieFound", cookieFound);
+  console.log("login->req.headers.cookie", req.headers.cookie);
   try {
     const { data } = await axios.get(
       `https://rest.gohighlevel.com/v1/users/lookup?email=` + query?.email,
       {
         headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X2lkIjoibFNkQ0QyOEpxSGVkVXk4eW9UMDYiLCJ2ZXJzaW9uIjoxLCJpYXQiOjE2NDkwNTI0MTM2MjYsInN1YiI6Im5XbTlWY1IzMmZQeUNuUW1aSVdXIn0.rsrRdZwRT-coBjfkb0IKOOhb3Ifx-I87xhDOs8a6V1w",
+          Authorization: `Bearer ${process.env.GHL_CRMHUB_KEY}`,
         },
       }
     );
+
+    console.log("ghl->userid", data);
 
     if (Object.keys(data).length === 0) {
       throw new Error("Could not find any data.");
     }
 
-    const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${data.id}`;
+    const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${data.email}`;
 
     const mmtRecordExists = await axios.get(mmtURI, {
       headers: {
-        Authorization:
-          "Bearer -MNDSqBJQ0LF4ueM6nxzhM-MQROrV87h2tbBrt2Vl6CGzUIWtH-/8I5rYrnD0jwG",
+        Authorization: `Bearer ${process.env.MMT_API_KEY}`,
       },
     });
 
@@ -31,22 +39,22 @@ export default async function handler(req, res) {
     }
 
     const user_id = mmtRecordExists?.data?.data[0]?.user_id;
-    const mmt2URI = `https://api.mymosttrusted.net/v1/network/41/config/${user_id}`;
 
-    const mmtMessages = await axios.get(mmt2URI, {
-      headers: {
-        Authorization:
-          "Bearer -MNDSqBJQ0LF4ueM6nxzhM-MQROrV87h2tbBrt2Vl6CGzUIWtH-/8I5rYrnD0jwG",
-      },
+    const userToken = createUserToken({ user_id, activation_id: data?.email });
+    setAccessToken(userToken);
+    res.cookie("mmt-crm", userToken);
+    res.setHeader("Set-Cookie", [
+      serialize("mmt-crm", userToken, { path: "/" }),
+    ]);
+
+    res.status(200).send({
+      user_id,
+      userToken,
     });
-
-    if (Object.keys(mmtMessages.data).length === 0) {
-      throw new Error("Could not find data.");
-    }
-
-    res.status(200).send({ payload: { ...mmtMessages.data }, user_id });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
 }
+
+export default cookies(handler);

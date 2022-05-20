@@ -15,18 +15,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    const invites = await axios.get(mmtURI, {
+    const invites = await fetch(mmtURI, {
       headers: {
         Authorization:
           "Bearer -MNDSqBJQ0LF4ueM6nxzhM-MQROrV87h2tbBrt2Vl6CGzUIWtH-/8I5rYrnD0jwG",
       },
     });
 
-    if (Object.keys(invites.data).length === 0) {
+    const data = await invites.json();
+
+    console.log("data", data);
+
+    if (Object.keys(data.data).length === 0) {
       throw new Error("Could not find MMT record.");
     }
 
-    res.status(200).send(invites.data);
+    res.status(200).send(data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });

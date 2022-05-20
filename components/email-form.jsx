@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -9,7 +10,7 @@ import { classNames } from "primereact/utils";
 import { Toast } from "primereact/toast";
 
 import styles from "./email-form.module.css";
-import CustomMessages from "./custom-messages";
+import { sleep } from "../helpers/common";
 
 const validationSchema = yup.object({
   email: yup
@@ -20,28 +21,29 @@ const validationSchema = yup.object({
 
 export default function EmailForm() {
   const toast = useRef(null);
-  const [responseData, setResponseData] = useState({});
+  const router = useRouter();
 
   const showMessageToast = (props) => toast.current.show({ ...props });
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const { data } = await axios(`/api/v1/lookup?email=${values.email}`);
-      // const {
-      //   data: { data: invites },
-      // } = await axios("/api/v1/invites");
 
       if (Object.keys(data).length === 0) {
         throw new Error("Could not find data.");
       }
 
-      setResponseData({ ...data });
+      console.log(data);
+
       showMessageToast({
         severity: "success",
         summary: "Record Found:",
         detail: "MMT record found",
         life: 3000,
       });
+
+      await sleep(1000);
+      router.push(`/${data?.user_id}`);
     } catch (error) {
       console.error(error);
       showMessageToast({
@@ -118,9 +120,11 @@ export default function EmailForm() {
         </div>
       </div>
 
-      {Object.keys(responseData).length !== 0 ? (
-        <CustomMessages responseData={responseData} />
-      ) : null}
+      {/* {Object.keys(userConfig).length !== 0 ? (
+        <CustomMessages responseData={userConfig} />
+      ) : null} */}
+
+      {/* {userConfig && <CustomMessages responseData={userConfig} />} */}
     </>
   );
 }

@@ -15,17 +15,17 @@ export default function Invites({ invites }) {
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  const getAllInvites = async () => {
-    const response = await fetch("/api/v1/invites");
-    const { data } = await response.json();
-    console.log("data", data);
-    setInvitesData(data);
-    return invites;
-  };
-  useEffect(() => {
-    getAllInvites();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // const getAllInvites = async () => {
+  //   const response = await fetch("/api/v1/invites");
+  //   const { data } = await response.json();
+  //   console.log("data", data);
+  //   setInvitesData(data);
+  //   return invites;
+  // };
+  // useEffect(() => {
+  //   getAllInvites();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const onRowSelect = (event) => {
     setShowInviteeDetailsModal(true);
@@ -116,8 +116,7 @@ export default function Invites({ invites }) {
 
       <div className="card">
         <DataTable
-          // value={invites}
-          value={invitesData && invitesData}
+          value={invites?.data}
           stripedRows
           selectionMode="single"
           selection={selectedInvitee}
@@ -147,14 +146,20 @@ export default function Invites({ invites }) {
   );
 }
 
-// export async function getStaticProps() {
-//   const {
-//     data: { data: invites },
-//   } = await axios("https://crm-linkedin-mmt-nxt.vercel.app/api/v1/invites");
+export const getServerSideProps = async (ctx) => {
+  const mmtURI = `https://api.mymosttrusted.net/v1/network/41/invites`;
+  const invites = await fetch(mmtURI, {
+    headers: {
+      Authorization:
+        "Bearer -MNDSqBJQ0LF4ueM6nxzhM-MQROrV87h2tbBrt2Vl6CGzUIWtH-/8I5rYrnD0jwG",
+    },
+  });
 
-//   return {
-//     props: {
-//       invites,
-//     },
-//   };
-// }
+  const data = await invites.json();
+
+  return {
+    props: {
+      invites: data,
+    },
+  };
+};

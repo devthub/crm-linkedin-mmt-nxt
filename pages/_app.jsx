@@ -7,16 +7,15 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
 import "../styles/globals.css";
-import NavMenu from "../components/nav-menu";
+import { UserProvider } from "../contexts/user-provider";
 
 function MyApp({ Component, pageProps }) {
-  const [activeIndex, setActiveIndex] = React.useState(3);
-
   return (
     <>
-      <NextNProgress />
-      <NavMenu activeIndex={activeIndex} setActiveIndex={setActiveIndex} />
-      <Component {...pageProps} />;
+      <UserProvider>
+        <NextNProgress />
+        <Component {...pageProps} />
+      </UserProvider>
     </>
   );
 }
