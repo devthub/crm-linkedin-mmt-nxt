@@ -3,7 +3,6 @@ import { InputText } from "primereact/inputtext";
 import { useUserContext } from "../contexts/user-provider";
 
 export default function UserDetails({ userDetails }) {
-  console.log("userDetails :>> ", userDetails);
   const { crmAPIText, setCrmAPIText } = useUserContext();
 
   return (

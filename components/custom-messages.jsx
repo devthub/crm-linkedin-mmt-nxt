@@ -94,8 +94,6 @@ export default function CustomMessages({ responseData }) {
   const toHTMLLineBreaks = (textValue) =>
     textValue.replace(/(?:\r\n|\r|\n)/g, "<br>");
 
-  console.log("responseData :>> ", responseData);
-
   return (
     <div className="mt-5">
       <Toast ref={toast} />

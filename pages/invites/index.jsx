@@ -15,18 +15,6 @@ export default function Invites({ invites }) {
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  // const getAllInvites = async () => {
-  //   const response = await fetch("/api/v1/invites");
-  //   const { data } = await response.json();
-  //   console.log("data", data);
-  //   setInvitesData(data);
-  //   return invites;
-  // };
-  // useEffect(() => {
-  //   getAllInvites();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   const onRowSelect = (event) => {
     setShowInviteeDetailsModal(true);
   };
@@ -86,8 +74,6 @@ export default function Invites({ invites }) {
       });
     }
   };
-
-  console.log("invitesData :>> ", invitesData);
 
   return (
     <>

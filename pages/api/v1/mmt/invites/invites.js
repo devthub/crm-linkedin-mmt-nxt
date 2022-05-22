@@ -1,10 +1,5 @@
-import axios from "axios";
-import { isEmpty } from "../../../../../helpers/common";
-
 export default async function handler(req, res) {
   const { query } = req;
-
-  console.log("query", query);
 
   // let mmtURI = "";
 
@@ -23,8 +18,6 @@ export default async function handler(req, res) {
   //   });
 
   //   const data = await invites.json();
-
-  //   console.log("data", data);
 
   //   if (Object.keys(data.data).length === 0) {
   //     throw new Error("Could not find MMT record.");

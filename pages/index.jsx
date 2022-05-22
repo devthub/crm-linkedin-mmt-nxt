@@ -15,8 +15,6 @@ export default function Home({ user }) {
   // active ripple effect
   PrimeReact.ripple = true;
 
-  console.log("Home->>user :>> ", user);
-
   const [visible, setVisible] = useState(false);
   const { userData, setUserData } = useUserContext();
 
@@ -74,12 +72,10 @@ export const getServerSideProps = async (ctx) => {
   const { req } = ctx;
   const cookies = req.headers?.cookie?.split("; ");
   const token = extractCookie(cookies, "mmt-crm");
-  console.log("index->ssr->token :>> ", token);
 
   try {
     user = await tradeTokenForUser(token);
   } catch (error) {
-    console.log("error here...");
     console.error(error);
   }
 

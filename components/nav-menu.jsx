@@ -10,7 +10,6 @@ export default function NavMenu({ setActiveIndex, activeIndex }) {
   useEffect(() => {
     if (router?.pathname === "/") setActiveIndex(0);
     else if (router?.pathname === "/invites") setActiveIndex(1);
-    console.log("router :>> ", router);
   });
 
   const items = [

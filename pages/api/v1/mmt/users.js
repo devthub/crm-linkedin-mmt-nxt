@@ -4,7 +4,6 @@ export default async function handler(req, res) {
   let mmt2URI = "";
 
   const { query } = req;
-  console.log("mmt->users->query", query);
 
   if (isEmpty(query)) {
     mmt2URI =
@@ -21,8 +20,6 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-
-    console.log("api/mmt/users/->data", data);
 
     if (isEmpty(data)) {
       throw new Error("Could not find user.");

@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 
 export default function InviteeDetails({ data }) {
-  // console.log("data :>> ", data);
   return <div>InviteeDetails</div>;
 }
 

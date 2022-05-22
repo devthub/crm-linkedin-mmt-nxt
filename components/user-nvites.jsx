@@ -80,8 +80,6 @@ export default function UserInvites({
     }
   };
 
-  console.log("user-invite-->>invites :>> ", invites);
-
   return (
     <>
       <Dialog

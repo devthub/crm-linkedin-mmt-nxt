@@ -28,8 +28,6 @@ export default function CRMContactForm({ handleSubmit, selectedInvitee }) {
 
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  console.log("crmform-->>selectedInvitee :>> ", selectedInvitee);
-
   const formik = useFormik({
     initialValues: {
       email: selectedInvitee?.email || "",

@@ -33,22 +33,13 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     const response = await fetch(`${apiBaseUrl}/mmt/invites/${queryString}`);
     const acceptedInvites = await response.json();
 
-    console.log(
-      "fetchAcceptedInvites-->>acceptedInvites.data :>> ",
-      acceptedInvites.data
-    );
-
     return acceptedInvites.data;
   };
-
-  console.log("userInvitesLists :>> ", userInvites);
 
   const handleOnlyShowAcceptedInvites = async (event) => {
     setIsLoading(true);
     setShowAcceptances(event.checked);
     if (event.checked) {
-      console.log("clicked");
-
       setUserInvitesList(await fetchAcceptedInvites("accepted"));
     } else {
       setUserInvitesList(await fetchAcceptedInvites(""));
@@ -97,8 +88,6 @@ export const getServerSideProps = async (ctx) => {
   let userConfig = null;
   let userInvites = null;
 
-  console.log("index->ssr->query :>> ", query);
-
   try {
     const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${query?.activation_id}`;
 
@@ -131,8 +120,6 @@ export const getServerSideProps = async (ctx) => {
   } catch (error) {
     console.error(error);
   }
-
-  console.log("user?.data :>> ", user?.data);
 
   return {
     props: {

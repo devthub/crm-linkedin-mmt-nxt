@@ -34,7 +34,6 @@ export default function EmailForm() {
         throw new Error("Could not find data.");
       }
 
-      console.log(data);
       setUserData(data);
 
       showMessageToast({

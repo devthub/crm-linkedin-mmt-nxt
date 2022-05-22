@@ -7,7 +7,6 @@ const extractCookie = (cookies, cookieName) => {
   if (isEmpty(cookieName) || isEmpty(cookies)) return "";
 
   const cookieFound = cookies.find((c) => c.includes(cookieName));
-  console.log("cookieFound", cookieFound);
 
   return cookieFound?.split(`${cookieName}=`)[1];
 };
