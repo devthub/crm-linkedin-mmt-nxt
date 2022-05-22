@@ -47,6 +47,8 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     setIsLoading(false);
   };
 
+  console.log("[invites]-->>userInvitesLists :>> ", userInvitesLists);
+
   return (
     <>
       <div className="grid">
