@@ -31,7 +31,7 @@ export default function Home({ user }) {
   useEffect(() => {
     setUserData(user);
     setVisible(user.success);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearUserState = () => {
     setVisible(false);

@@ -22,10 +22,10 @@ export default function CustomMessages({ responseData }) {
   const showMessageToast = (props) => toast.current.show({ ...props });
 
   useEffect(() => {
-    setUser_id(responseData?.user_id);
+    setUser_id(responseData?.user?.user_id);
     setDefaultPayload((prev) => ({
       ...prev,
-      ...responseData,
+      ...responseData.userConfig,
     }));
   }, [responseData]);
 
@@ -94,6 +94,8 @@ export default function CustomMessages({ responseData }) {
   const toHTMLLineBreaks = (textValue) =>
     textValue.replace(/(?:\r\n|\r|\n)/g, "<br>");
 
+  console.log("responseData :>> ", responseData);
+
   return (
     <div className="mt-5">
       <Toast ref={toast} />
@@ -116,6 +118,8 @@ export default function CustomMessages({ responseData }) {
           </div>
         </div>
       </Dialog>
+
+      <h5>User Config</h5>
 
       <div className="grid">
         <div className="col-12 lg:col-6">
