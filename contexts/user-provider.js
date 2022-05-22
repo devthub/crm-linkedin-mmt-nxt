@@ -6,6 +6,7 @@ export function UserProvider({ children }) {
   const [userConfig, setUserConfig] = useState(null);
   const [userData, setUserData] = useState(null);
   const [invites, setInvites] = useState([]);
+  const [crmAPIText, setCrmAPIText] = useState("");
 
   return (
     <UserContext.Provider
@@ -17,6 +18,8 @@ export function UserProvider({ children }) {
         setInvites,
         userData,
         setUserData,
+        crmAPIText,
+        setCrmAPIText,
       }}
     >
       {children}

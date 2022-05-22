@@ -225,3 +225,17 @@ img.flag {
 .p-tabview-title {
   margin-left: 0.5em;
 }
+
+span.p-column-title {
+  color: #2196f3;
+  margin-right: 1.5rem;
+}
+
+.api-key-wrapper {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  /* border: solid 1px #eee; */
+  padding: 1em 0;
+}

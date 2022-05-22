@@ -7,16 +7,23 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Checkbox } from "primereact/checkbox";
+import CRMContactForm from "./crm-contact-form";
+import { useUserContext } from "../contexts/user-provider";
 
-export default function UserInvites({ invites }) {
-  const [showAcceptances, setShowAcceptances] = useState(false);
+export default function UserInvites({
+  invites,
+  showAcceptances,
+  handleOnlyShowAcceptedInvites,
+  isLoading = false,
+}) {
+  const { crmAPIText } = useUserContext();
   const [selectedInvitee, setSelectedInvitee] = useState(null);
   const [showInviteeDetailsModal, setShowInviteeDetailsModal] = useState(false);
 
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  const onRowSelect = (event) => {
+  const onRowSelect = () => {
     setShowInviteeDetailsModal(true);
   };
 
@@ -34,27 +41,25 @@ export default function UserInvites({ invites }) {
           onClick={() => onHide(name)}
           className="p-button-text"
         />
-        <Button
+        {/* <Button
           label="Add to CRM"
           icon="pi pi-check"
           onClick={handleSubmit}
           autoFocus
-        />
+        /> */}
       </div>
     );
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values) => {
     try {
-      const { data } = await axios.post(`/api/v1/contacts/`, {
-        firstName: selectedInvitee?.first_name,
-        lastName: selectedInvitee?.last_name,
-        email: selectedInvitee?.email,
+      await axios.post(`/api/v1/contacts/`, {
+        firstName: values?.firstName,
+        lastName: values?.lastName,
+        email: values?.email,
+        tags: values?.tags,
+        crmAPI: crmAPIText,
       });
-
-      if (Object.keys(data).length === 0) {
-        throw new Error("Could not find data.");
-      }
 
       showMessageToast({
         severity: "success",
@@ -62,36 +67,34 @@ export default function UserInvites({ invites }) {
         detail: "Added successfully",
         life: 3000,
       });
+
+      setShowInviteeDetailsModal(false);
     } catch (error) {
-      console.error(error);
+      console.error(error.code);
       showMessageToast({
         severity: "error",
         summary: "Failed:",
-        detail: error.message,
+        detail: "Please provide API key in Account Tab. ",
         life: 3000,
       });
     }
   };
 
+  console.log("user-invite-->>invites :>> ", invites);
+
   return (
     <>
       <Dialog
-        header={`${selectedInvitee?.first_name} ${selectedInvitee?.last_name}`}
+        header="Review Information"
         visible={showInviteeDetailsModal}
         style={{ width: "80vw" }}
         footer={renderFooter("displayBasic")}
         onHide={onHide}
-        dismissableMask
       >
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
+        <CRMContactForm
+          handleSubmit={handleSubmit}
+          selectedInvitee={selectedInvitee}
+        />
       </Dialog>
 
       <Toast ref={toast} />
@@ -103,20 +106,21 @@ export default function UserInvites({ invites }) {
           <Checkbox
             inputId="acceptance"
             checked={showAcceptances}
-            onChange={(e) => setShowAcceptances(e.checked)}
+            onChange={handleOnlyShowAcceptedInvites}
           />
           <label htmlFor="acceptance">Only Show Accepted Invites</label>
         </div>
         <DataTable
-          value={invites?.data}
+          value={invites}
           stripedRows
           selectionMode="single"
           selection={selectedInvitee}
           onSelectionChange={(e) => setSelectedInvitee(e.value)}
           dataKey="id"
-          responsiveLayout="scroll"
+          responsiveLayout="stack"
           onRowSelect={onRowSelect}
           emptyMessage="No Invites..."
+          loading={isLoading}
         >
           <Column field="first_name" sortable header="First Name"></Column>
           <Column field="last_name" sortable header="Last Name"></Column>

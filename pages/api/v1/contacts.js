@@ -1,21 +1,28 @@
 import axios from "axios";
+import { isEmpty } from "../../../helpers/common";
 
 export default async function handler(req, res) {
   const {
-    body: { firstName, lastName, email },
+    body: { firstName, lastName, email, tags, crmAPI },
   } = req;
+
   try {
+    if (isEmpty(crmAPI))
+      return res
+        .status(400)
+        .send({ error: { message: "Please provide API key." } });
+
     const { data } = await axios.post(
       "https://rest.gohighlevel.com/v1/contacts/",
       {
         firstName,
         lastName,
         email,
+        tags,
       },
       {
         headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2NhdGlvbl9pZCI6IkhPWDFpU3NqdE9qYVFGWEFja2RsIiwiY29tcGFueV9pZCI6ImxTZENEMjhKcUhlZFV5OHlvVDA2IiwidmVyc2lvbiI6MSwiaWF0IjoxNjQ4MTY3MzU5MDA0LCJzdWIiOiJuV205VmNSMzJmUHlDblFtWklXVyJ9.8yAypO6gWBgo1KUQeQ6GodjM9CJv75IOPkFsLmfYpzE",
+          Authorization: `Bearer ${crmAPI}`,
         },
       }
     );

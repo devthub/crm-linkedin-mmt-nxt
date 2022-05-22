@@ -1,28 +1,41 @@
-import { useState } from "react";
-
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 import { InputText } from "primereact/inputtext";
+import { useUserContext } from "../contexts/user-provider";
 
 export default function UserDetails({ userDetails }) {
   console.log("userDetails :>> ", userDetails);
-  const [crmAPIText, setCrmAPIText] = useState("");
+  const { crmAPIText, setCrmAPIText } = useUserContext();
+
   return (
     <div className="grid fluid">
       <div className="col-12 mb-5">
-        <h5>CRM API</h5>
-        <Inplace closable className="p-button-outlined p-button-success">
-          <InplaceDisplay>
-            {crmAPIText || "CRM API here, click to Edit"}
-          </InplaceDisplay>
-          <InplaceContent>
-            <InputText
-              value={crmAPIText}
-              onChange={(e) => setCrmAPIText(e.target.value)}
-              autoFocus
-              style={{ width: "50%" }}
-            />
-          </InplaceContent>
-        </Inplace>
+        <h5 className="mb-1">Authorization</h5>
+        <div className="api-key-wrapper">
+          <Inplace closable>
+            <InplaceDisplay>
+              {crmAPIText || "CRM API here, click to Edit"}
+            </InplaceDisplay>
+            <InplaceContent>
+              <InputText
+                value={crmAPIText}
+                onChange={(e) => setCrmAPIText(e.target.value)}
+                autoFocus
+                style={{ width: "95%" }}
+              />
+            </InplaceContent>
+          </Inplace>
+        </div>
+        <span style={{ fontSize: ".8em" }}>
+          Provide your location api key (Bearer Token).{" "}
+          <a
+            // class="markdown-link"
+            href="https://help.gohighlevel.com/support/solutions/articles/48000982605-company-settings"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>You can find here</span>
+          </a>
+        </span>
       </div>
 
       <div className="col-12">

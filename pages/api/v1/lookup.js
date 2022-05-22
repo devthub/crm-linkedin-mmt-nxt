@@ -10,21 +10,6 @@ async function handler(req, res) {
   console.log("lookup-->>query", query);
 
   try {
-    // const { data } = await axios.get(
-    //   `https://rest.gohighlevel.com/v1/users/lookup?email=` + query?.email,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${process.env.GHL_CRMHUB_KEY}`,
-    //     },
-    //   }
-    // );
-
-    // console.log("ghl->userid", data);
-
-    // if (isEmpty(data)) {
-    //   throw new Error("Could not find any data.");
-    // }
-
     const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${query?.email}`;
 
     const mmtRecordExists = await axios.get(mmtURI, {

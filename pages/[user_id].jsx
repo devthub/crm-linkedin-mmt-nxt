@@ -1,29 +1,60 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import getConfig from "next/config";
 
 import { TabView, TabPanel } from "primereact/tabview";
 
 import CustomMessages from "../components/custom-messages";
 
-import { extractCookie } from "../helpers/common";
-import tradeTokenForUser from "../helpers/trade-token";
-import { useUserContext } from "../contexts/user-provider";
 import UserDetails from "../components/user-details";
 import UserInvites from "../components/user-nvites";
+import { isEmpty } from "../helpers/common";
+
+const { publicRuntimeConfig } = getConfig();
+const apiBaseUrl = `${publicRuntimeConfig.apiUrl}/v1`;
 
 export default function MMTUserDetails({ user, userConfig, userInvites }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [userInvitesLists, setUserInvitesList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [showAcceptances, setShowAcceptances] = useState(false);
   const router = useRouter();
 
-  // React.useEffect(() => {
-  //   if (userData.rejected) {
-  //     router.push("/");
-  //   }
-  // }, [userData.rejected, router]);
+  useEffect(() => {
+    setUserInvitesList(userInvites?.data);
+  }, [userInvites]);
 
-  // if (isLoading) return <div>Loading...</div>;
+  // invites/<user_id>?page=1&limit=50&tag_name=accepted
+  const fetchAcceptedInvites = async (accepted) => {
+    const queryString = !isEmpty(accepted)
+      ? `${user?.user_id}?page=1&limit=50&tag_name=${accepted}`
+      : `${user?.user_id}`;
 
-  console.log("userInvites :>> ", userInvites);
+    const response = await fetch(`${apiBaseUrl}/mmt/invites/${queryString}`);
+    const acceptedInvites = await response.json();
+
+    console.log(
+      "fetchAcceptedInvites-->>acceptedInvites.data :>> ",
+      acceptedInvites.data
+    );
+
+    return acceptedInvites.data;
+  };
+
+  console.log("userInvitesLists :>> ", userInvites);
+
+  const handleOnlyShowAcceptedInvites = async (event) => {
+    setIsLoading(true);
+    setShowAcceptances(event.checked);
+    if (event.checked) {
+      console.log("clicked");
+
+      setUserInvitesList(await fetchAcceptedInvites("accepted"));
+    } else {
+      setUserInvitesList(await fetchAcceptedInvites(""));
+    }
+    setIsLoading(false);
+  };
 
   return (
     <>
@@ -43,7 +74,13 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
               </TabPanel>
 
               <TabPanel header="Invites" leftIcon="pi pi-users">
-                <UserInvites invites={userInvites} />
+                <UserInvites
+                  invites={userInvitesLists}
+                  handleOnlyShowAcceptedInvites={handleOnlyShowAcceptedInvites}
+                  setShowAcceptances={setShowAcceptances}
+                  showAcceptances={showAcceptances}
+                  isLoading={isLoading}
+                />
               </TabPanel>
             </TabView>
           </div>
