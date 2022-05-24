@@ -19,7 +19,7 @@ export default function UserDetails({ userDetails }) {
                 value={crmAPIText}
                 onChange={(e) => setCrmAPIText(e.target.value)}
                 autoFocus
-                style={{ width: "95%" }}
+                style={{ width: "50%" }}
               />
             </InplaceContent>
           </Inplace>

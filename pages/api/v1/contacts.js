@@ -3,7 +3,7 @@ import { isEmpty } from "../../../helpers/common";
 
 export default async function handler(req, res) {
   const {
-    body: { firstName, lastName, email, tags, crmAPI },
+    body: { firstName, lastName, email, tags, phone, crmAPI },
   } = req;
 
   try {
@@ -18,6 +18,7 @@ export default async function handler(req, res) {
         firstName,
         lastName,
         email,
+        phone,
         tags,
       },
       {

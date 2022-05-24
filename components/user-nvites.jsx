@@ -41,12 +41,6 @@ export default function UserInvites({
           onClick={() => onHide(name)}
           className="p-button-text"
         />
-        {/* <Button
-          label="Add to CRM"
-          icon="pi pi-check"
-          onClick={handleSubmit}
-          autoFocus
-        /> */}
       </div>
     );
   };
@@ -57,6 +51,7 @@ export default function UserInvites({
         firstName: values?.firstName,
         lastName: values?.lastName,
         email: values?.email,
+        phone: values.phone,
         tags: values?.tags,
         crmAPI: crmAPIText,
       });

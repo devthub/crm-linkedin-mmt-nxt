@@ -20,19 +20,23 @@ const crmContactValidationSchema = yup.object({
     .string("Enter first name.")
     .required("First name is required."),
   lastName: yup.string("Enter last name.").required("Last name is required."),
+  phone: yup
+    .string("Enter last phone number.")
+    .required("Phone number is required."),
   tags: yup.array().of(yup.string()),
 });
 
 export default function CRMContactForm({ handleSubmit, selectedInvitee }) {
   const toast = useRef(null);
 
-  const showMessageToast = (props) => toast.current.show({ ...props });
-
   const formik = useFormik({
     initialValues: {
       email: selectedInvitee?.email || "",
       firstName: selectedInvitee?.first_name || "",
       lastName: selectedInvitee?.last_name || "",
+      phone: !isEmpty(selectedInvitee?.phone)
+        ? selectedInvitee?.phone[0].phone_number
+        : "",
       tags: !isEmpty(selectedInvitee?.tags)
         ? selectedInvitee?.tags.map((tag) => tag?.tag_name)
         : [],
@@ -63,7 +67,7 @@ export default function CRMContactForm({ handleSubmit, selectedInvitee }) {
             <form onSubmit={formik.handleSubmit} className="p-fluid">
               <h5>Personal Information</h5>
               <div className={`${styles.field} mt-5`}>
-                <span className="p-float-label p-input-icon-right">
+                <span className="p-float-label p-input-icon-left">
                   <i className="pi pi-user" />
                   <InputText
                     id="firstName"
@@ -86,8 +90,8 @@ export default function CRMContactForm({ handleSubmit, selectedInvitee }) {
                 {getFormErrorMessage("firstName")}
               </div>
 
-              <div className={styles.field}>
-                <span className="p-float-label p-input-icon-right">
+              <div className={`${styles.field} mt-3`}>
+                <span className="p-float-label p-input-icon-left">
                   <i className="pi pi-user" />
                   <InputText
                     id="lastName"
@@ -110,8 +114,32 @@ export default function CRMContactForm({ handleSubmit, selectedInvitee }) {
                 {getFormErrorMessage("lastName")}
               </div>
 
-              <div className={styles.field}>
-                <span className="p-float-label p-input-icon-right">
+              <div className={`${styles.field} mt-3`}>
+                <span className="p-float-label p-input-icon-left">
+                  <i className="pi pi-phone" />
+                  <InputText
+                    id="phone"
+                    name="phone"
+                    value={formik.values.phone}
+                    onChange={formik.handleChange}
+                    className={classNames({
+                      "p-invalid": isFormFieldValid("phone"),
+                    })}
+                  />
+                  <label
+                    htmlFor="phone"
+                    className={classNames({
+                      "p-error": isFormFieldValid("phone"),
+                    })}
+                  >
+                    Phone*
+                  </label>
+                </span>
+                {getFormErrorMessage("phone")}
+              </div>
+
+              <div className={`${styles.field} mt-3`}>
+                <span className="p-float-label p-input-icon-left">
                   <i className="pi pi-envelope" />
                   <InputText
                     id="email"
@@ -134,7 +162,7 @@ export default function CRMContactForm({ handleSubmit, selectedInvitee }) {
                 {getFormErrorMessage("email")}
               </div>
 
-              <div className={styles.field}>
+              <div className={`${styles.field} mt-3`}>
                 <h5>Tags</h5>
                 <Chips
                   name="tags"
