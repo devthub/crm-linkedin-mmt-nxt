@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import getConfig from "next/config";
 
 import { TabView, TabPanel } from "primereact/tabview";
 
@@ -9,9 +8,6 @@ import CustomMessages from "../components/custom-messages";
 import UserDetails from "../components/user-details";
 import UserInvites from "../components/user-nvites";
 import { isEmpty } from "../helpers/common";
-
-const { publicRuntimeConfig } = getConfig();
-const apiBaseUrl = `${publicRuntimeConfig.apiUrl}/v1`;
 
 export default function MMTUserDetails({ user, userConfig, userInvites }) {
   const [userInvitesLists, setUserInvitesList] = useState([]);
@@ -30,7 +26,7 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
       ? `${user?.user_id}?page=1&limit=50&tag_name=${accepted}`
       : `${user?.user_id}`;
 
-    const response = await fetch(`${apiBaseUrl}/mmt/invites/${queryString}`);
+    const response = await fetch(`api/v1/mmt/invites/${queryString}`);
     const acceptedInvites = await response.json();
 
     return acceptedInvites.data;

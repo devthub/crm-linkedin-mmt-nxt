@@ -14,7 +14,9 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(mmt2URI, {
+      method: "GET",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,
       },
     });

@@ -75,6 +75,8 @@ export const getServerSideProps = async (ctx) => {
 
   try {
     user = await tradeTokenForUser(token);
+
+    console.log("index -> ssr -->>user :>> ", user);
   } catch (error) {
     console.error(error);
   }
