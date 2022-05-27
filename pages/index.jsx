@@ -10,13 +10,15 @@ import PrimeReact from "primereact/api";
 import { extractCookie } from "../helpers/common";
 import tradeTokenForUser from "../helpers/trade-token";
 import { useUserContext } from "../contexts/user-provider";
+import PromptActivationLink from "../components/prompt-activation-link";
 
 export default function Home({ user }) {
   // active ripple effect
   PrimeReact.ripple = true;
 
-  const [visible, setVisible] = useState(false);
   const { userData, setUserData } = useUserContext();
+  const [visible, setVisible] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const router = useRouter();
 
@@ -29,6 +31,16 @@ export default function Home({ user }) {
   useEffect(() => {
     setUserData(user);
     setVisible(user.success);
+
+    if (typeof window !== "undefined") {
+      const crmLinkedin = JSON.parse(
+        window.localStorage.getItem("crm-linkedin-activate")
+      );
+      console.log("crmLinkedin :>> ", crmLinkedin);
+      if (crmLinkedin?.activated) {
+        setChecked(true);
+      }
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearUserState = () => {
@@ -36,7 +48,22 @@ export default function Home({ user }) {
     setUserData({ ...userData, rejected: true });
   };
 
-  if (setUserData.rejected)
+  console.log("alreadyActivated :>> ", checked);
+
+  if (!checked) {
+    return (
+      <div className={styles.container}>
+        <main className={styles.main}>
+          <PromptActivationLink
+            alreadyActivated={checked}
+            setChecked={setChecked}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  if (setUserData.rejected) {
     return (
       <>
         <div className={styles.container}>
@@ -46,6 +73,7 @@ export default function Home({ user }) {
         </div>
       </>
     );
+  }
 
   return (
     <>

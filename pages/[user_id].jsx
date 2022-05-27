@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { TabView, TabPanel } from "primereact/tabview";
+import { BreadCrumb } from "primereact/breadcrumb";
 
 import CustomMessages from "../components/custom-messages";
 
@@ -10,11 +11,12 @@ import UserInvites from "../components/user-nvites";
 import { isEmpty } from "../helpers/common";
 
 export default function MMTUserDetails({ user, userConfig, userInvites }) {
+  const items = [{ label: "User Details" }];
+  const home = { icon: "pi pi-home", url: "/" };
   const [userInvitesLists, setUserInvitesList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [showAcceptances, setShowAcceptances] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     setUserInvitesList(userInvites?.data);
@@ -47,8 +49,10 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
 
   return (
     <>
+      <BreadCrumb model={items} home={home} />
+
       <div className="grid">
-        <div className="md:col-12 lg:col-offset-2 lg:col-8">
+        <div className="md:col-12 lg:col-offset-1 lg:col-10">
           <div className="card">
             <h5>
               Welcome, {user?.first_name} {user?.last_name}!
