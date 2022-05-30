@@ -1258,6 +1258,11 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
+localstorage-slim@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/localstorage-slim/-/localstorage-slim-2.2.0.tgz#84638dc03c35bb6d22568f571f08e4c607559044"
+  integrity sha512-YyfTXXCRY9Sjf2dZlSyYQPuUhdOf0ucuWEoSdMcg2u9SAIjWtlsMvP91QeYNealXCy1BrnE9m3ejY82cYtgONQ==
+
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
