@@ -7,12 +7,13 @@ import { BreadCrumb } from "primereact/breadcrumb";
 import CustomMessages from "../components/custom-messages";
 
 import UserDetails from "../components/user-details";
-import UserInvites from "../components/user-nvites";
+import UserInvites from "../components/user-invites";
 import { isEmpty } from "../helpers/common";
 
 export default function MMTUserDetails({ user, userConfig, userInvites }) {
   const items = [{ label: "User Details" }];
   const home = { icon: "pi pi-home", url: "/" };
+
   const [userInvitesLists, setUserInvitesList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,8 +45,6 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     }
     setIsLoading(false);
   };
-
-  console.log("[invites]-->>userInvitesLists :>> ", userInvitesLists);
 
   return (
     <>

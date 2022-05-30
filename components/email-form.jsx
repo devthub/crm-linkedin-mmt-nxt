@@ -11,6 +11,7 @@ import { Toast } from "primereact/toast";
 
 import styles from "./email-form.module.css";
 import { useUserContext } from "../contexts/user-provider";
+import { myLS } from "../utils/ls";
 
 const validationSchema = yup.object({
   email: yup
@@ -36,12 +37,19 @@ export default function EmailForm() {
 
       setUserData(data);
 
+      myLS.setItem("_urt", {
+        user_id: data?.user.user_id,
+        activation_id: data?.user?.email,
+      });
+
       showMessageToast({
         severity: "success",
         summary: "Record Found:",
         detail: "MMT record found",
         life: 3000,
       });
+
+      // console.log("myLS.getItem(_urt) :>> ", myLS.getItem("_urt"));
 
       router.push(
         `/${data?.user_id}?activation_id=${data?.activation_id}`,
