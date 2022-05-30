@@ -29,14 +29,30 @@ export default function UserDetails({ userDetails }) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const truncateAPIKEY = (str, n) =>
+    str.length > n
+      ? str.substr(0, n - 25) +
+        "*****-*****-*****-*****-*****-*****-*****-" +
+        str.slice(str.length - 6, str.length - 1)
+      : str.length >= 5 && str.length <= n
+      ? str.slice(0, 1) + " ***"
+      : str;
+
   return (
     <div className="grid fluid">
       <div className="col-12 mb-5">
         <h5 className="mb-1">Authorization</h5>
         <div className="api-key-wrapper">
           <Inplace closable>
-            <InplaceDisplay>
-              {crmAPIText || "CRM API here, click to Edit"}
+            <InplaceDisplay style={{ backgroundColor: "#eee" }}>
+              {/* {` ${crmAPIText.slice(
+                0,
+                4
+              )}****-****-****-****-******${crmAPIText.slice(
+                crmAPIText.length - 6,
+                crmAPIText.length - 1
+              )}` || "CRM API here, click to Edit"} */}
+              {truncateAPIKEY(crmAPIText, 32)}
             </InplaceDisplay>
             <InplaceContent>
               <InputText
