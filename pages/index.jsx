@@ -7,16 +7,18 @@ import EmailForm from "../components/email-form";
 import styles from "../styles/Home.module.css";
 
 import PrimeReact from "primereact/api";
-import { extractCookie } from "../helpers/common";
+import { extractCookie, isEmpty } from "../helpers/common";
 import tradeTokenForUser from "../helpers/trade-token";
 import { useUserContext } from "../contexts/user-provider";
 import PromptActivationLink from "../components/prompt-activation-link";
+import { myLS } from "../utils/ls";
 
 export default function Home({ user }) {
   // active ripple effect
   PrimeReact.ripple = true;
 
   const { userData, setUserData } = useUserContext();
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -24,22 +26,27 @@ export default function Home({ user }) {
 
   const redirectToUserPage = () => {
     router.push(
-      `/${userData?.user?.user_id}?activation_id=${userData?.user?.activation_id}`
+      `/${userData?.user?.user_id || loggedInUser?.user_id}?activation_id=${
+        userData?.user?.activation_id || loggedInUser.activation_id
+      }`
     );
   };
 
   useEffect(() => {
-    setUserData(user);
-    setVisible(user.success);
-
     if (typeof window !== "undefined") {
+      setUserData(user);
+      setVisible(user?.success);
+
       const crmLinkedin = JSON.parse(
         window.localStorage.getItem("crm-linkedin-activate")
       );
-      console.log("crmLinkedin :>> ", crmLinkedin);
       if (crmLinkedin?.activated) {
         setChecked(true);
       }
+
+      const ls_urt_Item = myLS.getItem("_urt");
+
+      setLoggedInUser(ls_urt_Item);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -48,9 +55,17 @@ export default function Home({ user }) {
     setUserData({ ...userData, rejected: true });
   };
 
-  console.log("alreadyActivated :>> ", checked);
-
-  if (!checked) {
+  if (!user) {
+    return (
+      <>
+        <div className={styles.container}>
+          <main className={styles.main}>
+            <EmailForm />
+          </main>
+        </div>
+      </>
+    );
+  } else if (!checked) {
     return (
       <div className={styles.container}>
         <main className={styles.main}>
@@ -61,38 +76,28 @@ export default function Home({ user }) {
         </main>
       </div>
     );
-  }
-
-  if (setUserData.rejected) {
+  } else
     return (
       <>
         <div className={styles.container}>
           <main className={styles.main}>
+            <ConfirmDialog
+              visible={
+                (userData?.success && visible) ||
+                !isEmpty(loggedInUser?.activation_id)
+              }
+              onHide={clearUserState}
+              message={userData?.user?.email || loggedInUser?.activation_id}
+              header="Is this you?"
+              icon="pi pi-exclamation-triangle"
+              accept={redirectToUserPage}
+              reject={clearUserState}
+            />
             <EmailForm />
           </main>
         </div>
       </>
     );
-  }
-
-  return (
-    <>
-      <div className={styles.container}>
-        <main className={styles.main}>
-          <ConfirmDialog
-            visible={userData?.success && visible}
-            onHide={clearUserState}
-            message={userData?.user?.email}
-            header="Is this you?"
-            icon="pi pi-exclamation-triangle"
-            accept={redirectToUserPage}
-            reject={clearUserState}
-          />
-          <EmailForm />
-        </main>
-      </div>
-    </>
-  );
 }
 
 export const getServerSideProps = async (ctx) => {
@@ -103,8 +108,6 @@ export const getServerSideProps = async (ctx) => {
 
   try {
     user = await tradeTokenForUser(token);
-
-    console.log("index -> ssr -->>user :>> ", user);
   } catch (error) {
     console.error(error);
   }
