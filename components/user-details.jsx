@@ -1,9 +1,33 @@
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 import { InputText } from "primereact/inputtext";
+import { useEffect } from "react";
 import { useUserContext } from "../contexts/user-provider";
+import { myLS } from "../utils/ls";
 
 export default function UserDetails({ userDetails }) {
   const { crmAPIText, setCrmAPIText } = useUserContext();
+
+  const onChangeCRMAPI = (e) => {
+    setCrmAPIText(e.target.value);
+    myLS.setItem(userDetails?.user_id, {
+      [userDetails?.user_id]: e.target.value,
+      user_id: userDetails.user_id,
+    });
+
+    console.log(
+      "myLS.getItem(userDetails?.user_id) :>> ",
+      myLS.getItem(userDetails?.user_id)
+    );
+  };
+
+  useEffect(() => {
+    console.log("userDetails :>> ", userDetails);
+    const crmapi = myLS.getItem(userDetails?.user_id);
+    if (crmapi) {
+      if (crmapi.user_id === userDetails?.user_id)
+        setCrmAPIText(crmapi[userDetails?.user_id]);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="grid fluid">
@@ -17,7 +41,7 @@ export default function UserDetails({ userDetails }) {
             <InplaceContent>
               <InputText
                 value={crmAPIText}
-                onChange={(e) => setCrmAPIText(e.target.value)}
+                onChange={onChangeCRMAPI}
                 autoFocus
                 style={{ width: "50%" }}
               />
