@@ -52,7 +52,7 @@ export default function UserDetails({ userDetails }) {
                 crmAPIText.length - 6,
                 crmAPIText.length - 1
               )}` || "CRM API here, click to Edit"} */}
-              {truncateAPIKEY(crmAPIText, 32)}
+              {truncateAPIKEY(crmAPIText, 32) || "CRM API here, click to Edit"}
             </InplaceDisplay>
             <InplaceContent>
               <InputText
