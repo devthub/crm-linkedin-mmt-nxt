@@ -39,7 +39,7 @@ export default function EmailForm() {
 
       myLS.setItem("_urt", {
         user_id: data?.user.user_id,
-        activation_id: data?.user?.email,
+        activation_id: data?.user?.activation_id,
       });
 
       showMessageToast({
