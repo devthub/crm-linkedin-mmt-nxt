@@ -15,6 +15,7 @@ export default function UserInvites({
   showAcceptances,
   handleOnlyShowAcceptedInvites,
   isLoading = false,
+  refetchInvites,
 }) {
   const { crmAPIText } = useUserContext();
   const [selectedInvitee, setSelectedInvitee] = useState(null);
@@ -95,13 +96,22 @@ export default function UserInvites({
       <h5>Your Invites</h5>
 
       <div className="card">
-        <div className="field-checkbox">
-          <Checkbox
-            inputId="acceptance"
-            checked={showAcceptances}
-            onChange={handleOnlyShowAcceptedInvites}
+        <div className="flex justify-content-between align-items-center mb-2">
+          <div className="">
+            <Checkbox
+              inputId="acceptance"
+              checked={showAcceptances}
+              onChange={handleOnlyShowAcceptedInvites}
+            />
+            <label htmlFor="acceptance"> Only Show Accepted Invites</label>
+          </div>
+          <Button
+            disabled={isLoading}
+            loading={isLoading}
+            icon="pi pi-refresh"
+            // label="Refresh"
+            onClick={() => refetchInvites()}
           />
-          <label htmlFor="acceptance">Only Show Accepted Invites</label>
         </div>
         <DataTable
           value={invites}

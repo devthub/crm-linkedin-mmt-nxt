@@ -35,6 +35,14 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     return acceptedInvites.data;
   };
 
+  const handleRefetchInvites = async () => {
+    setShowAcceptances(false);
+    setIsLoading(true);
+    const fetchInvites = await fetchAcceptedInvites("");
+    setUserInvitesList(fetchInvites);
+    setIsLoading(false);
+  };
+
   const handleOnlyShowAcceptedInvites = async (event) => {
     setIsLoading(true);
     setShowAcceptances(event.checked);
@@ -72,6 +80,7 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
                   setShowAcceptances={setShowAcceptances}
                   showAcceptances={showAcceptances}
                   isLoading={isLoading}
+                  refetchInvites={handleRefetchInvites}
                 />
               </TabPanel>
             </TabView>
