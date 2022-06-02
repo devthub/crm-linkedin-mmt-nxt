@@ -1,6 +1,7 @@
+import { useEffect, useRef } from "react";
+import { Button } from "primereact/button";
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 import { InputText } from "primereact/inputtext";
-import { useEffect } from "react";
 import { useUserContext } from "../contexts/user-provider";
 import { myLS } from "../utils/ls";
 
@@ -88,7 +89,7 @@ export default function UserDetails({ userDetails }) {
           </label>
           <InputText
             id="firstName"
-            aria-describedby="firstName-help"
+            aria-describedby="firstName"
             className="block"
             disabled
             style={{ width: "100%" }}
@@ -104,7 +105,7 @@ export default function UserDetails({ userDetails }) {
           </label>
           <InputText
             id="lastName"
-            aria-describedby="lastName-help"
+            aria-describedby="lastName"
             className="block"
             disabled
             style={{ width: "100%" }}
@@ -120,7 +121,7 @@ export default function UserDetails({ userDetails }) {
           </label>
           <InputText
             id="email"
-            aria-describedby="email-help"
+            aria-describedby="email"
             className="block"
             disabled
             style={{ width: "100%" }}
@@ -136,7 +137,7 @@ export default function UserDetails({ userDetails }) {
           </label>
           <InputText
             id="email"
-            aria-describedby="position-help"
+            aria-describedby="position"
             className="block"
             disabled
             style={{ width: "100%" }}
@@ -152,7 +153,7 @@ export default function UserDetails({ userDetails }) {
           </label>
           <InputText
             id="lastWork"
-            aria-describedby="lastWork-help"
+            aria-describedby="lastWork"
             className="block"
             disabled
             style={{ width: "100%" }}

@@ -21,6 +21,7 @@ export default function Home({ user }) {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [visible, setVisible] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
 
@@ -47,6 +48,7 @@ export default function Home({ user }) {
       const ls_urt_Item = myLS.getItem("_urt");
 
       setLoggedInUser(ls_urt_Item);
+      setIsLoading(false);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -54,6 +56,14 @@ export default function Home({ user }) {
     setVisible(false);
     setUserData({ ...userData, rejected: true });
   };
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <main className={styles.main}>Loading..</main>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
