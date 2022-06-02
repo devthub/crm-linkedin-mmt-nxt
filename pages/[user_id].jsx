@@ -18,12 +18,15 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
   const home = { icon: "pi pi-home", url: "/" };
 
   const [userInvitesLists, setUserInvitesList] = useState([]);
+  const [isFetchingInvitesLoadingState, setIsFetchingInvitesLoadingState] =
+    useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showAcceptances, setShowAcceptances] = useState(false);
 
   useEffect(() => {
     setUserInvitesList(userInvites?.data);
+    setIsFetchingInvitesLoadingState(false);
     setIsLoading(false);
   }, [userInvites]);
 
@@ -41,21 +44,21 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
 
   const handleRefetchInvites = async () => {
     setShowAcceptances(false);
-    setIsLoading(true);
+    setIsFetchingInvitesLoadingState(true);
     const fetchInvites = await fetchAcceptedInvites("");
     setUserInvitesList(fetchInvites);
-    setIsLoading(false);
+    setIsFetchingInvitesLoadingState(false);
   };
 
   const handleOnlyShowAcceptedInvites = async (event) => {
-    setIsLoading(true);
+    setIsFetchingInvitesLoadingState(true);
     setShowAcceptances(event.checked);
     if (event.checked) {
       setUserInvitesList(await fetchAcceptedInvites("accepted"));
     } else {
       setUserInvitesList(await fetchAcceptedInvites(""));
     }
-    setIsLoading(false);
+    setIsFetchingInvitesLoadingState(false);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -91,7 +94,7 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
                     }
                     setShowAcceptances={setShowAcceptances}
                     showAcceptances={showAcceptances}
-                    isLoading={isLoading}
+                    isLoading={isFetchingInvitesLoadingState}
                     refetchInvites={handleRefetchInvites}
                   />
                 </TabPanel>
