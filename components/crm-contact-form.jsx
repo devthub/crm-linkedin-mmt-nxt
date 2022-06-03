@@ -20,9 +20,7 @@ const crmContactValidationSchema = yup.object({
     .string("Enter first name.")
     .required("First name is required."),
   lastName: yup.string("Enter last name.").required("Last name is required."),
-  phone: yup
-    .string("Enter last phone number.")
-    .required("Phone number is required."),
+  phone: yup.string("Enter last phone number."),
   tags: yup.array().of(yup.string()),
 });
 

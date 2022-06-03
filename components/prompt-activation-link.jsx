@@ -6,38 +6,47 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { ToggleButton } from "primereact/togglebutton";
 import { Checkbox } from "primereact/checkbox";
+import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 
 import { classNames } from "primereact/utils";
 
 import styles from "./email-form.module.css";
+import { myLS } from "../utils/ls";
 
 const activationLinkEmailSchema = yup.object({
   email: yup
     .string("Enter your email")
     .email("Enter a valid email")
     .required("Email is required"),
+  crmApi: yup.string("Enter CRM API").required("Please enter your CRM API"),
 });
 
 function PromptActivationLink({ alreadyActivated, setChecked }) {
   const openBlank = useRef(null);
   const [activationLink, setActivationLink] = useState("");
 
-  const handleSubmit = ({ email }, { setSubmitting }) => {
+  const handleSubmit = ({ crmApi, email }, { setSubmitting }) => {
     // setActivationLink(email);
     window.localStorage.setItem(
       "crm-linkedin-activate",
       JSON.stringify({ activated: true })
     );
     // window.location.href = `https://activate.maj3.com/mmt/crmhub/?activation_id=${email}`;
-    setChecked(true);
-    openBlank.current.click();
+
+    myLS.setItem("_seerem_k", {
+      [email]: crmApi,
+      email,
+    });
 
     setSubmitting(false);
+    setChecked(true);
+    openBlank.current.click();
   };
 
   const formik = useFormik({
     initialValues: {
       email: "",
+      crmApi: "",
     },
     validationSchema: activationLinkEmailSchema,
     onSubmit: handleSubmit,
@@ -101,12 +110,6 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
         </div>
       </div>
 
-      {/* <SelectButton
-        value={alreadyActivated}
-        options={options}
-        onChange={handleActivateClicked}
-      /> */}
-
       <div className="grid">
         <div className="col-12 md:col-offset-4 md:col-4">
           <form onSubmit={formik.handleSubmit} className="p-fluid">
@@ -134,8 +137,47 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
               {getFormErrorMessage("email")}
             </div>
 
+            <div className={`${styles.field} p-field mt-5`}>
+              <span className="p-float-label p-input-icon-left">
+                <i className="pi pi-lock" />
+                <InputText
+                  id="crmApi"
+                  name="crmApi"
+                  value={formik.values.crmApi}
+                  onChange={formik.handleChange}
+                  className={classNames({
+                    "p-invalid": isFormFieldValid("crmApi"),
+                  })}
+                />
+                <label
+                  htmlFor="crmApi"
+                  className={classNames({
+                    "p-error": isFormFieldValid("crmApi"),
+                  })}
+                >
+                  Enter Your CRM API *
+                </label>
+              </span>
+
+              <span>
+                <small id="username-help">
+                  Provide your location api key (Bearer Token).{" "}
+                  <a
+                    // class="markdown-link"
+                    href="https://help.gohighlevel.com/support/solutions/articles/48000982605-company-settings"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span>You can find here</span>
+                  </a>
+                </small>
+              </span>
+
+              <div>{getFormErrorMessage("email")}</div>
+            </div>
+
             <Button
-              className="mt-2"
+              className="mt-5"
               label={formik.isSubmitting ? "Submitting..." : "Submit"}
               icon="pi pi-send"
               iconPos="right"

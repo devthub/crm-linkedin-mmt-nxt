@@ -8,76 +8,18 @@ import { myLS } from "../utils/ls";
 export default function UserDetails({ userDetails }) {
   const { crmAPIText, setCrmAPIText } = useUserContext();
 
-  const onChangeCRMAPI = (e) => {
-    setCrmAPIText(e.target.value);
-    myLS.setItem(userDetails?.user_id, {
-      [userDetails?.user_id]: e.target.value,
-      user_id: userDetails.user_id,
-    });
-
-    console.log(
-      "myLS.getItem(userDetails?.user_id) :>> ",
-      myLS.getItem(userDetails?.user_id)
-    );
-  };
-
   useEffect(() => {
-    console.log("userDetails :>> ", userDetails);
-    const crmapi = myLS.getItem(userDetails?.user_id);
+    const crmapi = myLS.getItem("_seerem_k");
+
     if (crmapi) {
-      if (crmapi.user_id === userDetails?.user_id)
-        setCrmAPIText(crmapi[userDetails?.user_id]);
+      if (crmapi.email === userDetails?.activation_id) {
+        setCrmAPIText(crmapi[userDetails?.activation_id]);
+      }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const truncateAPIKEY = (str, n) =>
-    str.length > n
-      ? str.substr(0, n - 25) +
-        "*****-*****-*****-*****-*****-*****-*****-" +
-        str.slice(str.length - 6, str.length - 1)
-      : str.length >= 5 && str.length <= n
-      ? str.slice(0, 1) + " ***"
-      : str;
-
   return (
     <div className="grid fluid">
-      <div className="col-12 mb-5">
-        <h5 className="mb-1">Authorization</h5>
-        <div className="api-key-wrapper">
-          <Inplace closable>
-            <InplaceDisplay style={{ backgroundColor: "#eee" }}>
-              {/* {` ${crmAPIText.slice(
-                0,
-                4
-              )}****-****-****-****-******${crmAPIText.slice(
-                crmAPIText.length - 6,
-                crmAPIText.length - 1
-              )}` || "CRM API here, click to Edit"} */}
-              {truncateAPIKEY(crmAPIText, 32) || "CRM API here, click to Edit"}
-            </InplaceDisplay>
-            <InplaceContent>
-              <InputText
-                value={crmAPIText}
-                onChange={onChangeCRMAPI}
-                autoFocus
-                style={{ width: "50%" }}
-              />
-            </InplaceContent>
-          </Inplace>
-        </div>
-        <span style={{ fontSize: ".8em" }}>
-          Provide your location api key (Bearer Token).{" "}
-          <a
-            // class="markdown-link"
-            href="https://help.gohighlevel.com/support/solutions/articles/48000982605-company-settings"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span>You can find here</span>
-          </a>
-        </span>
-      </div>
-
       <div className="col-12">
         <h5>User Details</h5>
       </div>
