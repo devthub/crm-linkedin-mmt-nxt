@@ -65,9 +65,13 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
 
   return (
     <>
-      <BreadCrumb model={items} home={home} />
+      {/* <BreadCrumb model={items} home={home} /> */}
 
       <div className="grid">
+        <div className="md:col-12 lg:col-offset-1 lg:col-10">
+          <BreadCrumb model={items} home={home} />
+        </div>
+
         <div className="md:col-12 lg:col-offset-1 lg:col-10">
           <div className="card">
             <div className="flex justify-content-between align-items-center mb-2">
