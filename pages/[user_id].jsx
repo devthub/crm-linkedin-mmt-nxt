@@ -33,7 +33,7 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
   // invites/<user_id>?page=1&limit=50&tag_name=accepted
   const fetchAcceptedInvites = async (accepted) => {
     const queryString = !isEmpty(accepted)
-      ? `${user?.user_id}?page=1&limit=50&tag_name=${accepted}`
+      ? `${user?.user_id}?page=1&limit=50&status_name=${accepted}`
       : `${user?.user_id}`;
 
     const response = await fetch(`api/v1/mmt/invites/${queryString}`);
@@ -54,7 +54,7 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     setIsFetchingInvitesLoadingState(true);
     setShowAcceptances(event.checked);
     if (event.checked) {
-      setUserInvitesList(await fetchAcceptedInvites("accepted"));
+      setUserInvitesList(await fetchAcceptedInvites("Accepted"));
     } else {
       setUserInvitesList(await fetchAcceptedInvites(""));
     }

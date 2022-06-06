@@ -53,6 +53,9 @@ export default function Home({ user }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearUserState = () => {
+    // if(typeof window !== "undefined"){
+    //   window.localStorage.removeItem("")
+    // }
     setVisible(false);
     setUserData({ ...userData, rejected: true });
   };
