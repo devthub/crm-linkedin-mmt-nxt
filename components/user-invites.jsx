@@ -171,7 +171,7 @@ export default function UserInvites({
       import("jspdf-autotable").then(() => {
         const doc = new jsPDF.default(0, 0);
         doc.autoTable(exportColumns, invites);
-        doc.save("products.pdf");
+        doc.save("invites.pdf");
       });
     });
   };
