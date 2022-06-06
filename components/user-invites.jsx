@@ -21,6 +21,9 @@ export default function UserInvites({
   const { crmAPIText } = useUserContext();
   const [selectedInvitee, setSelectedInvitee] = useState(null);
   const [showInviteeDetailsModal, setShowInviteeDetailsModal] = useState(false);
+  const [exportLoadingState, setExportLoadingState] = useState(false);
+  const [exportXLSLoadingState, setExportXLSLoadingState] = useState(false);
+  const [exportPDFLoadingState, setExportPDFLoadingState] = useState(false);
 
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
@@ -76,13 +79,6 @@ export default function UserInvites({
       });
     }
   };
-
-  // <Column field="first_name" sortable header="First Name"></Column>
-  //         <Column field="last_name" sortable header="Last Name"></Column>
-  //         <Column field="email" sortable header="Email"></Column>
-  //         <Column field="company" sortable header="Company"></Column>
-  //         <Column field="position" sortable header="Position"></Column>
-  //         <Column field="country" sortable header="Country"></Column>
 
   const cols = [
     { field: "first_name", header: "First Name" },
@@ -168,10 +164,12 @@ export default function UserInvites({
 
   const exportPdf = () => {
     import("jspdf").then((jsPDF) => {
+      setExportPDFLoadingState(true);
       import("jspdf-autotable").then(() => {
         const doc = new jsPDF.default(0, 0);
         doc.autoTable(exportColumns, invites);
         doc.save("invites.pdf");
+        setExportPDFLoadingState(false);
       });
     });
   };
@@ -189,6 +187,7 @@ export default function UserInvites({
   };
 
   const saveAsExcelFile = (buffer, fileName) => {
+    setExportXLSLoadingState(true);
     import("file-saver").then((module) => {
       if (module && module.default) {
         let EXCEL_TYPE =
@@ -203,6 +202,7 @@ export default function UserInvites({
           fileName + "_export_" + new Date().getTime() + EXCEL_EXTENSION
         );
       }
+      setExportXLSLoadingState(false);
     });
   };
 
@@ -252,6 +252,7 @@ export default function UserInvites({
         data-pr-tooltip="XLS"
         tooltip="Export Excel"
         tooltipOptions={{ position: "top" }}
+        loading={exportXLSLoadingState}
       />
       <Button
         type="button"
@@ -262,6 +263,7 @@ export default function UserInvites({
         data-pr-tooltip="PDF"
         tooltip="Export PDF"
         tooltipOptions={{ position: "top" }}
+        loading={exportPDFLoadingState}
       />
       {/* <Button
         type="button"
@@ -284,6 +286,8 @@ export default function UserInvites({
       />
     </div>
   );
+
+  console.log("exportLoadingState :>> ", exportLoadingState);
 
   return (
     <>
@@ -327,7 +331,7 @@ export default function UserInvites({
           responsiveLayout="stack"
           onRowSelect={onRowSelect}
           emptyMessage="No Invites..."
-          loading={isLoading}
+          loading={isLoading || exportPDFLoadingState || exportXLSLoadingState}
           header={header}
         >
           <Column field="first_name" sortable header="First Name"></Column>
