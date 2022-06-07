@@ -1,14 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { Dialog } from "primereact/dialog";
 
+import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Checkbox } from "primereact/checkbox";
+import { Paginator } from "primereact/paginator";
+import { Dropdown } from "primereact/dropdown";
+
 import CRMContactForm from "./crm-contact-form";
 import { useUserContext } from "../contexts/user-provider";
+import { isEmpty, sleep } from "../helpers/common";
 
 export default function UserInvites({
   invites,
@@ -24,6 +28,10 @@ export default function UserInvites({
   const [exportLoadingState, setExportLoadingState] = useState(false);
   const [exportXLSLoadingState, setExportXLSLoadingState] = useState(false);
   const [exportPDFLoadingState, setExportPDFLoadingState] = useState(false);
+  const [selectedAcceptedInvites, setSelectedAcceptedInvites] = useState(null);
+
+  const [basicFirst, setBasicFirst] = useState(0);
+  const [basicRows, setBasicRows] = useState(10);
 
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
@@ -53,8 +61,8 @@ export default function UserInvites({
   const handleSubmit = async (values) => {
     try {
       await axios.post(`/api/v1/contacts/`, {
-        firstName: values?.firstName,
-        lastName: values?.lastName,
+        firstName: values?.firstName ? values?.firstName : values?.first_name,
+        lastName: values?.lastName ? values?.lastName : values?.last_name,
         email: values?.email,
         phone: values.phone,
         tags: values?.tags,
@@ -63,7 +71,9 @@ export default function UserInvites({
 
       showMessageToast({
         severity: "success",
-        summary: "Success:",
+        summary: `${
+          values?.firstName ? values?.firstName : values?.first_name
+        } ${values?.lastName ? values?.lastName : values?.last_name}`,
         detail: "Added successfully",
         life: 3000,
       });
@@ -76,6 +86,21 @@ export default function UserInvites({
         summary: "Failed:",
         detail: "Please provide API key in Account Tab. ",
         life: 3000,
+      });
+    }
+  };
+
+  const handleAddBulkToCRM = () => {
+    if (isEmpty(selectedAcceptedInvites)) {
+      return showMessageToast({
+        severity: "error",
+        summary: "Failed:",
+        detail: "Please select at least one invite ",
+        life: 3000,
+      });
+    } else {
+      selectedAcceptedInvites?.forEach(async (element) => {
+        await handleSubmit(element);
       });
     }
   };
@@ -167,7 +192,10 @@ export default function UserInvites({
       setExportPDFLoadingState(true);
       import("jspdf-autotable").then(() => {
         const doc = new jsPDF.default(0, 0);
-        doc.autoTable(exportColumns, invites);
+        doc.autoTable(
+          exportColumns,
+          !isEmpty(selectedAcceptedInvites) ? selectedAcceptedInvites : invites
+        );
         doc.save("invites.pdf");
         setExportPDFLoadingState(false);
       });
@@ -176,7 +204,9 @@ export default function UserInvites({
 
   const exportExcel = () => {
     import("xlsx").then((xlsx) => {
-      const worksheet = xlsx.utils.json_to_sheet(invites);
+      const worksheet = xlsx.utils.json_to_sheet(
+        !isEmpty(selectedAcceptedInvites) ? selectedAcceptedInvites : invites
+      );
       const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
       const excelBuffer = xlsx.write(workbook, {
         bookType: "xlsx",
@@ -237,7 +267,7 @@ export default function UserInvites({
         type="button"
         icon="pi pi-file"
         // onClick={() => alert("export csv")}
-        onClick={() => exportCSV(false)}
+        onClick={() => exportCSV(!isEmpty(selectedAcceptedInvites))}
         className="mr-2"
         data-pr-tooltip="CSV"
         tooltip="Export CSV"
@@ -265,14 +295,18 @@ export default function UserInvites({
         tooltipOptions={{ position: "top" }}
         loading={exportPDFLoadingState}
       />
-      {/* <Button
-        type="button"
-        icon="pi pi-filter"
-        // onClick={() => alert("export csv")}
-        // onClick={() => exportCSV(true)}
-        className="p-button-info ml-auto"
-        data-pr-tooltip="Selection Only"
-      /> */}
+      {!isEmpty(selectedAcceptedInvites) && (
+        <Button
+          type="button"
+          icon="pi pi-upload"
+          onClick={handleAddBulkToCRM}
+          // onClick={() => alert("export csv")}
+          // onClick={() => exportCSV(true)}
+          className="p-button-success"
+          data-pr-tooltip="Selection Only"
+          label="Add To CRM"
+        />
+      )}
       <Button
         type="button"
         disabled={isLoading}
@@ -287,7 +321,77 @@ export default function UserInvites({
     </div>
   );
 
-  console.log("exportLoadingState :>> ", exportLoadingState);
+  const isSelectable = (value, field) => {
+    let isSelectable = true;
+    switch (field) {
+      case "email":
+        isSelectable = value !== "";
+        break;
+      // case "name":
+      // case "category":
+      //   isSelectable = value.startsWith("B") || value.startsWith("A");
+      //   break;
+
+      default:
+        break;
+    }
+    return isSelectable;
+  };
+
+  const isRowSelectable = (event) => {
+    const data = event.data;
+    return isSelectable(data.email, "email");
+  };
+
+  const rowClassName = (data) => {
+    return isSelectable(data.email, "email") ? "" : "p-disabled";
+  };
+
+  const onBasicPageChange = (event) => {
+    setBasicFirst(event.first);
+    setBasicRows(event.rows);
+  };
+
+  const template2 = {
+    layout: "RowsPerPageDropdown CurrentPageReport PrevPageLink NextPageLink",
+    RowsPerPageDropdown: (options) => {
+      const dropdownOptions = [
+        { label: 10, value: 10 },
+        { label: 20, value: 20 },
+        { label: 50, value: 50 },
+      ];
+
+      return (
+        <React.Fragment>
+          <span
+            className="mx-1"
+            style={{ color: "var(--text-color)", userSelect: "none" }}
+          >
+            Items per page:{" "}
+          </span>
+          <Dropdown
+            value={options.value}
+            options={dropdownOptions}
+            onChange={options.onChange}
+          />
+        </React.Fragment>
+      );
+    },
+    CurrentPageReport: (options) => {
+      return (
+        <span
+          style={{
+            color: "var(--text-color)",
+            userSelect: "none",
+            width: "120px",
+            textAlign: "center",
+          }}
+        >
+          {options.first} - {options.last} of {options.totalRecords}
+        </span>
+      );
+    },
+  };
 
   return (
     <>
@@ -324,23 +428,57 @@ export default function UserInvites({
           ref={dt}
           value={invites}
           stripedRows
-          selectionMode="single"
-          selection={selectedInvitee}
-          onSelectionChange={(e) => setSelectedInvitee(e.value)}
+          paginator
+          paginatorTemplate={template2}
+          first={basicFirst}
+          rows={basicRows}
+          // selectionMode="checkbox"
+          // selection={selectedInvitee}
+          selection={selectedAcceptedInvites}
+          // onSelectionChange={(e) => setSelectedInvitee(e.value)}
           dataKey="id"
           responsiveLayout="stack"
-          onRowSelect={onRowSelect}
+          // onRowSelect={onRowSelect}
           emptyMessage="No Invites..."
           loading={isLoading || exportPDFLoadingState || exportXLSLoadingState}
           header={header}
+          // selection={selectedProducts12}
+          onSelectionChange={(e) => setSelectedAcceptedInvites(e.value)}
+          // dataKey="id"
+          isDataSelectable={isRowSelectable}
+          rowClassName={rowClassName}
+          paginatorClassName="justify-content-end"
+          className="mt-6"
         >
-          <Column field="first_name" sortable header="First Name"></Column>
-          <Column field="last_name" sortable header="Last Name"></Column>
+          <Column
+            selectionMode="multiple"
+            headerStyle={{ width: "3em" }}
+          ></Column>
+          <Column
+            field="first_name"
+            sortable
+            header="First Name"
+            style={{ width: "12em" }}
+          ></Column>
+          <Column
+            field="last_name"
+            sortable
+            header="Last Name"
+            style={{ width: "12em" }}
+          ></Column>
           <Column field="email" sortable header="Email"></Column>
           <Column field="company" sortable header="Company"></Column>
           <Column field="position" sortable header="Position"></Column>
           <Column field="country" sortable header="Country"></Column>
         </DataTable>
+
+        {/* <Paginator
+          first={basicFirst}
+          rows={basicRows}
+          totalRecords={invites?.length}
+          rowsPerPageOptions={[10, 20, 30]}
+          onPageChange={onBasicPageChange}
+        ></Paginator> */}
       </div>
     </>
   );
