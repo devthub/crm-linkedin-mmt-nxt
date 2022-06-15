@@ -13,6 +13,9 @@ import { Dropdown } from "primereact/dropdown";
 import CRMContactForm from "./crm-contact-form";
 import { useUserContext } from "../contexts/user-provider";
 import { isEmpty, sleep } from "../helpers/common";
+import { Inplace, InplaceContent, InplaceDisplay } from "primereact/inplace";
+import { truncateAPIKEY } from "../pages/[user_id]";
+import { InputText } from "primereact/inputtext";
 
 export default function UserInvites({
   invites,
@@ -20,6 +23,9 @@ export default function UserInvites({
   handleOnlyShowAcceptedInvites,
   isLoading = false,
   refetchInvites,
+  onChangeCRMAPI,
+  showEnterAPIKeyModal,
+  setShowEnterAPIKeyModal,
 }) {
   const dt = useRef(null);
   const { crmAPIText } = useUserContext();
@@ -58,6 +64,19 @@ export default function UserInvites({
     );
   };
 
+  const renderAPIModalFooter = (name) => {
+    return (
+      <div className="mt-3">
+        <Button
+          label="Close"
+          icon="pi pi-times"
+          onClick={() => setShowEnterAPIKeyModal(false)}
+          className="p-button-text"
+        />
+      </div>
+    );
+  };
+
   const handleSubmit = async (values) => {
     try {
       await axios.post(`/api/v1/contacts/`, {
@@ -84,9 +103,12 @@ export default function UserInvites({
       showMessageToast({
         severity: "error",
         summary: "Failed:",
-        detail: "Please provide API key in Account Tab. ",
+        detail: "Please provide API key and try again. ",
         life: 3000,
       });
+
+      await sleep(100);
+      setShowEnterAPIKeyModal(true);
     }
   };
 
@@ -406,6 +428,47 @@ export default function UserInvites({
           handleSubmit={handleSubmit}
           selectedInvitee={selectedInvitee}
         />
+      </Dialog>
+
+      <Dialog
+        header="Enter API key"
+        visible={showEnterAPIKeyModal}
+        style={{ width: "80vw" }}
+        onHide={() => setShowEnterAPIKeyModal(false)}
+        footer={renderAPIModalFooter}
+      >
+        <>
+          <h6 className="mb-1">Authorization</h6>
+          <span>
+            <small id="username-help">
+              Provide your location api key (Bearer Token).{" "}
+              <a
+                // class="markdown-link"
+                href="https://help.gohighlevel.com/support/solutions/articles/48000982605-company-settings"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>You can find here</span>
+              </a>
+            </small>
+          </span>
+          <div className="api-key-wrapper mt-2">
+            <Inplace closable>
+              <InplaceDisplay style={{ backgroundColor: "#eee" }}>
+                {truncateAPIKEY(crmAPIText, 32) ||
+                  "CRM API here, click to Edit"}
+              </InplaceDisplay>
+              <InplaceContent>
+                <InputText
+                  value={crmAPIText}
+                  onChange={onChangeCRMAPI}
+                  autoFocus
+                  style={{ width: "85%" }}
+                />
+              </InplaceContent>
+            </Inplace>
+          </div>
+        </>
       </Dialog>
 
       <Toast ref={toast} />

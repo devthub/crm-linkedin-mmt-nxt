@@ -6,8 +6,6 @@ export default async function tradeTokenForUser(token) {
       ? process.env.PROD_SERVER_BASE_URL
       : process.env.LOCAL_SERVER_BASE_URL;
 
-  console.log("tradeTokenForUser-->>apiBaseUrl", apiBaseUrl);
-
   try {
     if (!token) throw Error("No token found");
 
@@ -23,7 +21,6 @@ export default async function tradeTokenForUser(token) {
       }
     );
     const users = await response.json();
-    console.log("users?.data[0]", users?.data[0]);
 
     return { rejected: false, success: true, user: users?.data[0] };
   } catch (error) {

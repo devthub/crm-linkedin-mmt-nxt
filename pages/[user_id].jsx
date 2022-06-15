@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
 
 import { TabView, TabPanel } from "primereact/tabview";
-import { Button } from "primereact/button";
 import { BreadCrumb } from "primereact/breadcrumb";
 
 import CustomMessages from "../components/custom-messages";
@@ -11,8 +9,41 @@ import UserDetails from "../components/user-details";
 import UserInvites from "../components/user-invites";
 import { isEmpty } from "../helpers/common";
 import Image from "next/image";
+import { useUserContext } from "../contexts/user-provider";
+import { myLS } from "../utils/ls";
+
+export const truncateAPIKEY = (str, n) =>
+  str.length > n
+    ? str.substr(0, n - 25) +
+      "*****-*****-*****-*****-*****-*****-*****-" +
+      str.slice(str.length - 6, str.length - 1)
+    : str.length >= 5 && str.length <= n
+    ? str.slice(0, 1) + " ***"
+    : str;
 
 export default function MMTUserDetails({ user, userConfig, userInvites }) {
+  const { setCrmAPIText } = useUserContext();
+  const [showEnterAPIKeyModal, setShowEnterAPIKeyModal] = useState(false);
+
+  useEffect(() => {
+    const crmapi = myLS.getItem("_seerem_k");
+
+    if (crmapi) {
+      if (crmapi.email === user?.activation_id) {
+        setCrmAPIText(crmapi[user?.activation_id]);
+      }
+    }
+  }, [setCrmAPIText]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onChangeCRMAPI = (e) => {
+    setCrmAPIText(e.target.value);
+
+    myLS.setItem("_seerem_k", {
+      [user?.activation_id]: e.target.value,
+      email: user?.activation_id,
+    });
+  };
+
   const openLinkedin = useRef(null);
   const items = [{ label: "User Details" }];
   const home = { icon: "pi pi-home", url: "/" };
@@ -65,8 +96,6 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
 
   return (
     <>
-      {/* <BreadCrumb model={items} home={home} /> */}
-
       <div className="grid">
         <div className="md:col-12 lg:col-offset-1 lg:col-10">
           <BreadCrumb model={items} home={home} />
@@ -100,6 +129,9 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
                     showAcceptances={showAcceptances}
                     isLoading={isFetchingInvitesLoadingState}
                     refetchInvites={handleRefetchInvites}
+                    onChangeCRMAPI={onChangeCRMAPI}
+                    showEnterAPIKeyModal={showEnterAPIKeyModal}
+                    setShowEnterAPIKeyModal={setShowEnterAPIKeyModal}
                   />
                 </TabPanel>
               </TabView>
@@ -119,13 +151,6 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
                   onClick={() => openLinkedin?.current.click()}
                   style={{ cursor: "pointer" }}
                 />
-                {/* <Button
-                  // icon="pi pi-refresh"
-                  // label="Linkedin Profile"
-                  onClick={() => openLinkedin?.current.click()}
-                >
-                 
-                </Button> */}
               </div>
             </div>
           </div>
