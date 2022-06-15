@@ -49,8 +49,6 @@ export default function EmailForm() {
         life: 3000,
       });
 
-      // console.log("myLS.getItem(_urt) :>> ", myLS.getItem("_urt"));
-
       router.push(
         `/${data?.user_id}?activation_id=${data?.activation_id}`,
         undefined,

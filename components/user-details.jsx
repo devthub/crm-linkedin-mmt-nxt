@@ -1,23 +1,9 @@
-import { useEffect, useRef } from "react";
-import { Button } from "primereact/button";
-import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
+import { useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { useUserContext } from "../contexts/user-provider";
 import { myLS } from "../utils/ls";
 
 export default function UserDetails({ userDetails }) {
-  const { crmAPIText, setCrmAPIText } = useUserContext();
-
-  useEffect(() => {
-    const crmapi = myLS.getItem("_seerem_k");
-
-    if (crmapi) {
-      if (crmapi.email === userDetails?.activation_id) {
-        setCrmAPIText(crmapi[userDetails?.activation_id]);
-      }
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <div className="grid fluid">
       <div className="col-12">
