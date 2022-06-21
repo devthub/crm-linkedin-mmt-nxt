@@ -84,7 +84,7 @@ export default function UserInvites({
         lastName: values?.lastName ? values?.lastName : values?.last_name,
         email: values?.email,
         phone: values.phone,
-        tags: values?.tags,
+        tags: values?.tags?.map((tag) => tag.tag_name),
         crmAPI: crmAPIText,
       });
 
