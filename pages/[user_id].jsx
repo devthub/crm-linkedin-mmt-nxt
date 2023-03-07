@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import React, { useEffect, useRef, useState } from "react";
 
 import { BreadCrumb } from "primereact/breadcrumb";
@@ -26,6 +27,10 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
   const { setCrmAPIText } = useUserContext();
   const [showEnterAPIKeyModal, setShowEnterAPIKeyModal] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const crmUrt = myLS.getItem("_urt");
+  }, []);
 
   useEffect(() => {
     const crmapi = myLS.getItem("_seerem_k");
@@ -166,6 +171,20 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
 
 export const getServerSideProps = async (ctx) => {
   const { query } = ctx;
+  const cookies = ctx.req.cookies;
+  const redirectObj = {
+    redirect: { permanent: false, destination: "/" },
+    props: {},
+  };
+
+  if (cookies["mmt-crm"] === "") {
+    return redirectObj;
+  }
+
+  const { exp } = jwt.decode(cookies["mmt-crm"]);
+  if (Date.now() >= exp * 1000) {
+    return redirectObj;
+  }
 
   let user = null;
   let userConfig = null;

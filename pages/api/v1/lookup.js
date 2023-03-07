@@ -1,7 +1,10 @@
 import axios from "axios";
 import { serialize } from "cookie";
+import otpGenerator from "otp-generator";
 import { setAccessToken } from "../../../globals/auth";
 import { isEmpty } from "../../../helpers/common";
+import User from "../../../models/User";
+import dbConnect from "../../../utils/config/dbConnect";
 import cookies from "../../../utils/cookies";
 import { createUserToken } from "../../../utils/tokens";
 
@@ -22,13 +25,47 @@ async function handler(req, res) {
       },
     });
 
-    if (isEmpty(mmtRecordExists?.data.data[0])) {
+    if (isEmpty(mmtRecordExists?.data.data?.[0])) {
       throw new Error("Could not find MMT record.");
     }
 
-    const user_id = mmtRecordExists?.data?.data[0]?.user_id;
+    await dbConnect();
 
-    const userToken = createUserToken({ user_id, activation_id: query?.email });
+    const otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    const userEmail = mmtRecordExists?.data.data?.[0]?.email;
+    const user_id = mmtRecordExists?.data?.data?.[0]?.user_id;
+    const mmtUser = mmtRecordExists?.data?.data?.[0];
+
+    console.log(
+      "mmtRecordExists?.data?.data?.[0]",
+      mmtRecordExists?.data?.data?.[0]
+    );
+
+    const user = await User.findOneAndUpdate(
+      { email: userEmail },
+      {
+        otp,
+        first_name: mmtUser.first_name,
+        last_name: mmtUser.last_name,
+        user_id: mmtUser?.user_id,
+        li_link: mmtUser?.li_link,
+        position: mmtUser?.position,
+        last_work_text: mmtUser?.last_work_text,
+        country: mmtUser?.country,
+        activation_id: mmtUser?.activation_id,
+      },
+      { new: true, upsert: true }
+    );
+
+    console.log("otp", otp);
+    console.log("user", user);
+
+    const userToken = "";
     setAccessToken(userToken);
     res.cookie("mmt-crm", userToken);
     res.setHeader("Set-Cookie", [
@@ -37,14 +74,14 @@ async function handler(req, res) {
 
     res.status(200).send({
       success: true,
-      user: mmtRecordExists?.data?.data[0],
+      user: mmtRecordExists?.data?.data?.[0],
       user_id,
-      userToken,
+      // userToken,
       activation_id: query?.email,
     });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 }
 

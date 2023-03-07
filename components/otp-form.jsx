@@ -16,7 +16,9 @@ const OtpForm = ({ onVerifyOTP }) => {
       <div className="flex flex-column align-items-center justify-content-center">
         <div className="flex flex-column align-items-center justify-content-center my-2">
           <h2 className="text-xl"> One-Time Password</h2>
-          <p className="text-sm"> Input the code</p>
+          <p className="text-sm">
+            Please enter the 6-digits code we sent to your email
+          </p>
         </div>
         <OtpInput
           value={otp}

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { createRef, memo, useRef, useState } from "react";
@@ -38,25 +38,27 @@ export default function EmailForm() {
         throw new Error("Could not find data.");
       }
 
-      setUserData(data);
+      // setUserData(data);
 
-      myLS.setItem("_urt", {
-        user_id: data?.user.user_id,
-        activation_id: data?.user?.activation_id,
-      });
-
-      // showMessageToast({
-      //   severity: "success",
-      //   summary: "Record Found:",
-      //   detail: "MMT record found",
-      //   life: 3000,
+      // myLS.setItem("_urt", {
+      //   user_id: data?.user.user_id,
+      //   activation_id: data?.user?.activation_id,
       // });
+
+      showMessageToast({
+        severity: "success",
+        summary: "Record Found:",
+        detail: "MMT record found",
+        life: 3000,
+      });
 
       // router.push(
       //   `/${data?.user_id}?activation_id=${data?.activation_id}`,
       //   undefined,
       //   { shallow: true }
       // );
+      setShowOtpForm(true);
+      router.push(`/?email=${values.email}`, undefined, { shallow: true });
     } catch (error) {
       console.error(error.message);
       showMessageToast({
@@ -69,36 +71,45 @@ export default function EmailForm() {
       setShowOtpForm(false);
     }
 
-    setShowOtpForm(true);
     setSubmitting(false);
   };
 
-  const handleOTPVerification = (otpCode) => {
+  const handleOTPVerification = async (otpCode) => {
     console.log("otpCode", otpCode);
 
-    if (otpCode === "123456") {
+    try {
+      const { data } = await axios.post(`/api/v1/verify-otp`, {
+        email: router.query?.email,
+        otp: otpCode,
+      });
+
+      console.log("data", data);
+      setUserData(data);
+
       myLS.setItem("_urt", {
-        user_id: userData?.user.user_id,
-        activation_id: userData?.user?.activation_id,
+        user_id: data?.user.user_id,
+        activation_id: data?.user?.activation_id,
       });
 
       showMessageToast({
         severity: "success",
-        summary: "Record Found:",
-        detail: "MMT record found",
+        summary: "Success",
+        detail: "OTP Verified.",
         life: 3000,
       });
 
       router.push(
-        `/${userData?.user_id}?activation_id=${userData?.activation_id}`,
+        `/${data?.user_id}?activation_id=${data?.activation_id}`,
         undefined,
         { shallow: true }
       );
-    } else {
+    } catch (error) {
+      console.error(error);
+
       showMessageToast({
         severity: "error",
         summary: "Failed:",
-        detail: "Invalid Code.",
+        detail: "Invalid code.",
         life: 3000,
       });
     }
