@@ -7,9 +7,14 @@ import { createUserToken } from "../../../utils/tokens";
 
 async function handler(req, res) {
   const { query } = req;
+  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
+  console.log(
+    "🚀 ~ file: lookup.js:11 ~ handler ~ mmtAPIBaseUri:",
+    mmtAPIBaseUri
+  );
 
   try {
-    const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${query?.email}`;
+    const mmtURI = `${mmtAPIBaseUri}/users?page=1&limit=50&activation_id=${query?.email}`;
 
     const mmtRecordExists = await axios.get(mmtURI, {
       headers: {

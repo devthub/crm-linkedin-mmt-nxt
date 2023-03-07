@@ -2,14 +2,14 @@ import axios from "axios";
 
 export default async function handler(req, res) {
   const { query, body } = req;
+  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
 
-  const mmtUri = `https://api.mymosttrusted.net/v1/network/41/config/${query.user_id}`;
+  const mmtUri = `${mmtAPIBaseUri}/config/${query.user_id}`;
 
   const axiosConfig = {
     headers: {
       "Content-Type": "application/json;charset=UTF-8",
-      Authorization:
-        "Bearer -MNDSqBJQ0LF4ueM6nxzhM-MQROrV87h2tbBrt2Vl6CGzUIWtH-/8I5rYrnD0jwG",
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_INVITES_API}`,
     },
   };
 
