@@ -16,10 +16,7 @@ const UserSchema = new mongoose.Schema({
   last_work_text: String,
   country: String,
   activation_id: String,
-  otp: {
-    code: String,
-    expiry: { type: Date, default: Date.now },
-  },
+  otp: String,
   backupOtpCodes: [{ type: String }],
 });
 
