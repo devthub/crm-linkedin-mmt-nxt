@@ -14,7 +14,7 @@ async function verifyOtpHandler(req, res) {
   if (method === "POST") {
     try {
       await dbConnect();
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ activation_id: email });
       if (!user) {
         return res.status(404).json({
           message: "User not found!",
