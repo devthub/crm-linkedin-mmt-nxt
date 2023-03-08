@@ -101,6 +101,9 @@ export default function MMTUserDetails({
     setIsFetchingInvitesLoadingState(false);
   };
 
+  console.log("userpage::>router.query", router.query);
+  console.log("userpage::>user", user);
+
   if (userConfig?.code || userInvites?.code)
     return (
       <div

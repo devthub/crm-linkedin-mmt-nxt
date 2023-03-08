@@ -12,6 +12,11 @@ const nextConfig = {
             key: "Origin",
             value: "(?<origin>^https://.*.crm-hub.tech$)",
           },
+          {
+            type: "header",
+            key: "Origin",
+            value: "(?<origin>^https://crm-linkedin-mmt*$)",
+          },
         ],
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },

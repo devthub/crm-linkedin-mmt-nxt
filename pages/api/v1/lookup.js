@@ -71,8 +71,8 @@ async function handler(req, res) {
       success: true,
       user: mmtRecordExists?.data?.data?.[0],
       user_id,
-      // userToken,
-      activation_id: query?.email,
+      userToken,
+      activation_id: user?.activation_id,
     });
   } catch (error) {
     console.error(error);

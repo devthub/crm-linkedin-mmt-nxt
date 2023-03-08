@@ -83,7 +83,7 @@ export default function EmailForm() {
       setUserData(data);
 
       myLS.setItem("_urt", {
-        user_id: data?.user.user_id,
+        user_id: data?.user?.user_id,
         activation_id: data?.user?.activation_id,
       });
 
@@ -101,7 +101,8 @@ export default function EmailForm() {
       //   undefined,
       //   { shallow: true }
       // );
-      router.push(`/${data?.user_id}`);
+      console.log("before push email form ::>router.query", router.query);
+      router.push(`/${data?.user_id}`, undefined, { shallow: true });
     } catch (error) {
       console.error(error);
 
@@ -131,6 +132,8 @@ export default function EmailForm() {
       )
     );
   };
+
+  console.log("email form ::>userData", userData);
 
   return (
     <>

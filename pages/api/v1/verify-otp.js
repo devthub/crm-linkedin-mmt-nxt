@@ -51,7 +51,7 @@ async function verifyOtpHandler(req, res) {
         user: JSON.parse(JSON.stringify(user)),
         user_id: user.user_id,
         userToken,
-        activation_id: email,
+        activation_id: user?.activation_id,
       });
     } catch (error) {
       console.error(error);
