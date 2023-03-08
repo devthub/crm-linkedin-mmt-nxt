@@ -33,7 +33,6 @@ export default function EmailForm() {
     try {
       const { data } = await axios(`/api/v1/lookup?email=${values.email}`);
 
-      console.log("🚀 ~ file: email-form.jsx:36 ~ handleSubmit ~ data:", data);
       if (Object.keys(data).length === 0) {
         throw new Error("Could not find data.");
       }
@@ -75,15 +74,12 @@ export default function EmailForm() {
   };
 
   const handleOTPVerification = async (otpCode) => {
-    console.log("otpCode", otpCode);
-
     try {
       const { data } = await axios.post(`/api/v1/verify-otp`, {
         email: router.query?.email,
         otp: otpCode,
       });
 
-      console.log("data", data);
       setUserData(data);
 
       myLS.setItem("_urt", {
@@ -98,11 +94,12 @@ export default function EmailForm() {
         life: 3000,
       });
 
-      router.push(
-        `/${data?.user_id}?activation_id=${data?.activation_id}`,
-        undefined,
-        { shallow: true }
-      );
+      // router.push(
+      //   `/${data?.user_id}?activation_id=${data?.activation_id}`,
+      //   undefined,
+      //   { shallow: true }
+      // );
+      router.push(`/${data?.user_id}`);
     } catch (error) {
       console.error(error);
 
