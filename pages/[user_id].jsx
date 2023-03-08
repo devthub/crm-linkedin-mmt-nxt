@@ -181,23 +181,23 @@ export default function MMTUserDetails({
 }
 
 export const getServerSideProps = async (ctx) => {
-  const { query, req } = ctx;
+  const { query } = ctx;
 
-  const redirectObj = {
-    redirect: { permanent: false, destination: "/" },
-    props: {},
-  };
+  // const redirectObj = {
+  //   redirect: { permanent: false, destination: "/" },
+  //   props: {},
+  // };
 
-  const cookies = req.headers?.cookie?.split("; ");
-  const token = extractCookie(cookies, "mmt-crm");
+  // const cookies = req.headers?.cookie?.split("; ");
+  // const token = extractCookie(cookies, "mmt-crm");
 
-  const decodedToken = jwt.decode(token);
-  console.log("decodedToken", decodedToken);
+  // const decodedToken = jwt.decode(token);
+  // console.log("decodedToken", decodedToken);
 
-  if (!decodedToken || Date.now() >= decodedToken.exp * 1000) {
-    console.log("Token Expired.");
-    return redirectObj;
-  }
+  // if (!decodedToken || Date.now() >= decodedToken.exp * 1000) {
+  //   console.log("Token Expired.");
+  //   return redirectObj;
+  // }
 
   let users = null;
   let userConfig = null;
@@ -216,8 +216,8 @@ export const getServerSideProps = async (ctx) => {
 
     users = await mmtRecordExists.json();
 
-    // const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${users?.data?.[0]?.user_id}`;
-    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${query?.user_id}`;
+    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${users?.data?.[0]?.user_id}`;
+    // const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${query?.user_id}`;
 
     const response = await fetch(mmt2ConfigURI, {
       headers: {
@@ -227,8 +227,8 @@ export const getServerSideProps = async (ctx) => {
 
     userConfig = await response.json();
 
-    // const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${users?.data?.[0]?.user_id}`;
-    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${query?.user_id}`;
+    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${users?.data?.[0]?.user_id}`;
+    // const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${query?.user_id}`;
     const invitesResponse = await fetch(mmtInvitesURI, {
       headers: {
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,

@@ -32,33 +32,6 @@ export default function Home({ user }) {
   const router = useRouter();
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  // const handleCurrentUserOtp = async () => {
-  //   console.log("loggedInUser", loggedInUser);
-  //   // try {
-  //   //   const { data } = await axios(
-  //   //     `/api/v1/lookup?email=${loggedInUser.activation_id}`
-  //   //   );
-
-  //   //   console.log("🚀 ~ file: email-form.jsx:36 ~ handleSubmit ~ data:", data);
-
-  //   //   if (Object.keys(data).length === 0) {
-  //   //     throw new Error("Could not find data.");
-  //   //   }
-
-  //   //   setUserData(data);
-  //   // } catch (error) {
-  //   //   console.error(error.message);
-  //   //   showMessageToast({
-  //   //     severity: "error",
-  //   //     summary: "Failed:",
-  //   //     detail: "Could not find activation id",
-  //   //     life: 3000,
-  //   //   });
-
-  //   // }
-  //   setShowOtpForm(true);
-  // };
-
   const redirectToUserPage = () => {
     router.push(
       `/${userData?.user?.user_id || loggedInUser?.user_id}?activation_id=${
@@ -165,12 +138,12 @@ export default function Home({ user }) {
       console.log("OTP::>data", data);
 
       console.log("before push email form ::>router.query", router.query);
-      router.push(`/${data?.user_id}`, undefined, { shallow: true });
-      // router.push(
-      //   `/${data?.user_id}?activation_id=${data?.activation_id}`,
-      //   undefined,
-      //   { shallow: true }
-      // );
+      // router.push(`/${data?.user_id}`, undefined, { shallow: true });
+      router.push(
+        `/${data?.user_id}?activation_id=${data?.activation_id}`,
+        undefined,
+        { shallow: true }
+      );
     } catch (error) {
       console.error(error);
 
@@ -260,47 +233,6 @@ export default function Home({ user }) {
     </>
   );
 }
-
-// export const getServerSideProps = async (ctx) => {
-//   let user = null;
-//   const { req } = ctx;
-//   const cookies = req.headers?.cookie?.split("; ");
-//   const token = extractCookie(cookies, "mmt-crm");
-
-//   const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
-
-//   try {
-//     const { activation_id } = verify(token, process.env.JWT_USER_SECRET);
-//     console.log(
-//       "🚀 ~ file: index.jsx:177 ~ getServerSideProps ~ activation_id:",
-//       activation_id
-//     );
-//     // user = await tradeTokenForUser(token);
-
-//     const mmtURI = `${mmtAPIBaseUri}/users?limit=1&activation_id=${activation_id}`;
-//     const response = await fetch(mmtURI, {
-//       method: "GET",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${process.env.MMT_API_KEY}`,
-//       },
-//     });
-
-//     user = await response.json();
-//     return {
-//       props: {
-//         user: user?.data?.[0] || null,
-//       },
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     return {
-//       props: {
-//         user: null,
-//       },
-//     };
-//   }
-// };
 
 export const getServerSideProps = async (ctx) => {
   let user = null;
