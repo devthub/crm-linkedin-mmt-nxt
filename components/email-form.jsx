@@ -94,6 +94,8 @@ export default function EmailForm() {
         life: 3000,
       });
 
+      console.log("OTP::>data", data);
+
       // router.push(
       //   `/${data?.user_id}?activation_id=${data?.activation_id}`,
       //   undefined,

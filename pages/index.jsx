@@ -67,6 +67,7 @@ export default function Home({ user }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      console.log("user", user);
       setUserData(user);
       setVisible(user?.success);
 
@@ -150,8 +151,8 @@ export default function Home({ user }) {
               message={userData?.user?.email || loggedInUser?.activation_id}
               header="Is this you?"
               icon="pi pi-exclamation-triangle"
-              // accept={redirectToUserPage}
-              accept={handleCurrentUserOtp}
+              accept={redirectToUserPage}
+              // accept={handleCurrentUserOtp}
               reject={clearUserState}
             />
             <EmailForm />
