@@ -133,13 +133,6 @@ export default function Home({ user }) {
         </div>
       </>
     );
-  } else if (showOtpForm) {
-    return (
-      <>
-        <Toast ref={toast} />
-        <OtpForm />
-      </>
-    );
   } else
     return (
       <>
