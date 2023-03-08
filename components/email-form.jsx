@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { createRef, memo, useRef, useState } from "react";
@@ -74,6 +74,7 @@ export default function EmailForm() {
   };
 
   const handleOTPVerification = async (otpCode) => {
+    console.log("handleOTPVerification fn called");
     try {
       const { data } = await axios.post(`/api/v1/verify-otp`, {
         email: router.query?.email,

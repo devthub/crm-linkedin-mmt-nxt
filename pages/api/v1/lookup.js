@@ -67,6 +67,11 @@ async function handler(req, res) {
       serialize("mmt-crm", userToken, { path: "/" }),
     ]);
 
+    console.log(
+      "lookupHandler:>>mmtRecordExists?.data?.data?.[0]",
+      mmtRecordExists?.data?.data?.[0]
+    );
+
     res.status(200).send({
       success: true,
       user: mmtRecordExists?.data?.data?.[0],

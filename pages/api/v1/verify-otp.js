@@ -24,6 +24,8 @@ async function verifyOtpHandler(req, res) {
         });
       }
 
+      console.log("verify-otp handler::> user", user);
+
       const otpVerified = user.verifyOtp(otp);
 
       if (!otpVerified) {
@@ -48,7 +50,7 @@ async function verifyOtpHandler(req, res) {
 
       res.status(200).send({
         success: true,
-        user: JSON.parse(JSON.stringify(user)),
+        user,
         user_id: user.user_id,
         userToken,
         activation_id: user?.activation_id,

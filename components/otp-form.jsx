@@ -55,6 +55,7 @@ export const OtpInput = ({
   };
 
   const handleInputChange = (e, index) => {
+    e.preventDefault();
     const elem = e.target;
     const val = e.target.value;
 
@@ -75,6 +76,7 @@ export const OtpInput = ({
   };
 
   const handleKeyUp = (e) => {
+    e.preventDefault();
     const current = e.currentTarget;
     if (e.key === "ArrowLeft" || e.key === "Backspace") {
       const prev = current.previousElementSibling;
