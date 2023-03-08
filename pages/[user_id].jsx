@@ -183,30 +183,12 @@ export default function MMTUserDetails({
 export const getServerSideProps = async (ctx) => {
   const { query } = ctx;
 
-  // const redirectObj = {
-  //   redirect: { permanent: false, destination: "/" },
-  //   props: {},
-  // };
-
-  // const cookies = req.headers?.cookie?.split("; ");
-  // const token = extractCookie(cookies, "mmt-crm");
-
-  // const decodedToken = jwt.decode(token);
-  // console.log("decodedToken", decodedToken);
-
-  // if (!decodedToken || Date.now() >= decodedToken.exp * 1000) {
-  //   console.log("Token Expired.");
-  //   return redirectObj;
-  // }
-
-  let users = null;
+  let user = null;
   let userConfig = null;
   let userInvites = null;
 
-  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
-
   try {
-    const mmtURI = `${mmtAPIBaseUri}/users?page=1&limit=50&activation_id=${decodedToken?.activation_id}`;
+    const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${query?.activation_id}`;
 
     const mmtRecordExists = await fetch(mmtURI, {
       headers: {
@@ -214,10 +196,9 @@ export const getServerSideProps = async (ctx) => {
       },
     });
 
-    users = await mmtRecordExists.json();
+    user = await mmtRecordExists.json();
 
-    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${users?.data?.[0]?.user_id}`;
-    // const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${query?.user_id}`;
+    const mmt2ConfigURI = `https://api.mymosttrusted.net/v1/network/41/config/${user.data[0]?.user_id}`;
 
     const response = await fetch(mmt2ConfigURI, {
       headers: {
@@ -227,8 +208,7 @@ export const getServerSideProps = async (ctx) => {
 
     userConfig = await response.json();
 
-    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${users?.data?.[0]?.user_id}`;
-    // const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${query?.user_id}`;
+    const mmtInvitesURI = `https://api.mymosttrusted.net/v1/network/41/invites/${user.data[0]?.user_id}`;
     const invitesResponse = await fetch(mmtInvitesURI, {
       headers: {
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,
@@ -236,27 +216,15 @@ export const getServerSideProps = async (ctx) => {
     });
 
     userInvites = await invitesResponse.json();
-
-    return {
-      props: {
-        ok: true,
-        message: "Success",
-        user: users?.data?.[0] || null,
-        userConfig,
-        userInvites,
-      },
-    };
   } catch (error) {
     console.error(error);
-
-    return {
-      props: {
-        ok: false,
-        message: error.message,
-        user: null,
-        userConfig: null,
-        userInvites: null,
-      },
-    };
   }
+
+  return {
+    props: {
+      user: user?.data[0],
+      userConfig,
+      userInvites,
+    },
+  };
 };
