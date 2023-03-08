@@ -213,8 +213,8 @@ export const getServerSideProps = async (ctx) => {
 
     users = await mmtRecordExists.json();
 
-    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${users?.data?.[0]?.user_id}`;
-    // const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${query?.user_id}`;
+    // const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${users?.data?.[0]?.user_id}`;
+    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${query?.user_id}`;
 
     const response = await fetch(mmt2ConfigURI, {
       headers: {
@@ -224,8 +224,8 @@ export const getServerSideProps = async (ctx) => {
 
     userConfig = await response.json();
 
-    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${users?.data?.[0]?.user_id}`;
-    // const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${query?.user_id}`;
+    // const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${users?.data?.[0]?.user_id}`;
+    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${query?.user_id}`;
     const invitesResponse = await fetch(mmtInvitesURI, {
       headers: {
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,

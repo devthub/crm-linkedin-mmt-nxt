@@ -1,3 +1,4 @@
+import { verify } from "jsonwebtoken";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -75,6 +76,7 @@ export default function Home({ user }) {
         window.localStorage.getItem("crm-linkedin-activate")
       );
       if (crmLinkedin?.activated) {
+        console.log("Not activated");
         setChecked(true);
       }
 
@@ -103,19 +105,8 @@ export default function Home({ user }) {
     );
   }
 
-  if (!user?.success) {
-    return (
-      <>
-        <Toast ref={toast} />
-
-        <div className={styles.container}>
-          <main className={styles.main}>
-            <EmailForm />
-          </main>
-        </div>
-      </>
-    );
-  } else if (!checked) {
+  if (!checked) {
+    console.log("!checked", !checked);
     return (
       <>
         <Toast ref={toast} />
@@ -126,6 +117,18 @@ export default function Home({ user }) {
               alreadyActivated={checked}
               setChecked={setChecked}
             />
+          </main>
+        </div>
+      </>
+    );
+  } else if (!user) {
+    return (
+      <>
+        <Toast ref={toast} />
+
+        <div className={styles.container}>
+          <main className={styles.main}>
+            <EmailForm />
           </main>
         </div>
       </>
@@ -170,15 +173,37 @@ export const getServerSideProps = async (ctx) => {
   const cookies = req.headers?.cookie?.split("; ");
   const token = extractCookie(cookies, "mmt-crm");
 
+  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
+
   try {
-    user = await tradeTokenForUser(token);
+    const { activation_id } = verify(token, process.env.JWT_USER_SECRET);
+    console.log(
+      "🚀 ~ file: index.jsx:177 ~ getServerSideProps ~ activation_id:",
+      activation_id
+    );
+    // user = await tradeTokenForUser(token);
+
+    const mmtURI = `${mmtAPIBaseUri}/users?limit=1&activation_id=${activation_id}`;
+    const response = await fetch(mmtURI, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+      },
+    });
+
+    user = await response.json();
+    return {
+      props: {
+        user: user?.data?.[0] || null,
+      },
+    };
   } catch (error) {
     console.error(error);
+    return {
+      props: {
+        user: null,
+      },
+    };
   }
-
-  return {
-    props: {
-      user,
-    },
-  };
 };
