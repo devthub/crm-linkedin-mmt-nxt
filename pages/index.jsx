@@ -121,7 +121,9 @@ export default function Home({ user }) {
         </div>
       </>
     );
-  } else if (!user) {
+  }
+
+  if (!user) {
     return (
       <>
         <Toast ref={toast} />
@@ -133,31 +135,32 @@ export default function Home({ user }) {
         </div>
       </>
     );
-  } else
-    return (
-      <>
-        <Toast ref={toast} />
+  }
 
-        <div className={styles.container}>
-          <main className={styles.main}>
-            <ConfirmDialog
-              visible={
-                (userData?.success && visible) ||
-                !isEmpty(loggedInUser?.activation_id)
-              }
-              onHide={clearUserState}
-              message={userData?.user?.email || loggedInUser?.activation_id}
-              header="Is this you?"
-              icon="pi pi-exclamation-triangle"
-              accept={redirectToUserPage}
-              // accept={handleCurrentUserOtp}
-              reject={clearUserState}
-            />
-            <EmailForm />
-          </main>
-        </div>
-      </>
-    );
+  return (
+    <>
+      <Toast ref={toast} />
+
+      <div className={styles.container}>
+        <main className={styles.main}>
+          <ConfirmDialog
+            visible={
+              (userData?.success && visible) ||
+              !isEmpty(loggedInUser?.activation_id)
+            }
+            onHide={clearUserState}
+            message={userData?.user?.email || loggedInUser?.activation_id}
+            header="Is this you?"
+            icon="pi pi-exclamation-triangle"
+            accept={redirectToUserPage}
+            // accept={handleCurrentUserOtp}
+            reject={clearUserState}
+          />
+          <EmailForm />
+        </main>
+      </div>
+    </>
+  );
 }
 
 // export const getServerSideProps = async (ctx) => {
