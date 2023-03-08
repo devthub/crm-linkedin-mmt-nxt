@@ -167,43 +167,62 @@ export default function Home({ user }) {
     );
 }
 
+// export const getServerSideProps = async (ctx) => {
+//   let user = null;
+//   const { req } = ctx;
+//   const cookies = req.headers?.cookie?.split("; ");
+//   const token = extractCookie(cookies, "mmt-crm");
+
+//   const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
+
+//   try {
+//     const { activation_id } = verify(token, process.env.JWT_USER_SECRET);
+//     console.log(
+//       "🚀 ~ file: index.jsx:177 ~ getServerSideProps ~ activation_id:",
+//       activation_id
+//     );
+//     // user = await tradeTokenForUser(token);
+
+//     const mmtURI = `${mmtAPIBaseUri}/users?limit=1&activation_id=${activation_id}`;
+//     const response = await fetch(mmtURI, {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+//       },
+//     });
+
+//     user = await response.json();
+//     return {
+//       props: {
+//         user: user?.data?.[0] || null,
+//       },
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       props: {
+//         user: null,
+//       },
+//     };
+//   }
+// };
+
 export const getServerSideProps = async (ctx) => {
   let user = null;
   const { req } = ctx;
   const cookies = req.headers?.cookie?.split("; ");
   const token = extractCookie(cookies, "mmt-crm");
 
-  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
-
   try {
-    const { activation_id } = verify(token, process.env.JWT_USER_SECRET);
-    console.log(
-      "🚀 ~ file: index.jsx:177 ~ getServerSideProps ~ activation_id:",
-      activation_id
-    );
-    // user = await tradeTokenForUser(token);
-
-    const mmtURI = `${mmtAPIBaseUri}/users?limit=1&activation_id=${activation_id}`;
-    const response = await fetch(mmtURI, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.MMT_API_KEY}`,
-      },
-    });
-
-    user = await response.json();
-    return {
-      props: {
-        user: user?.data?.[0] || null,
-      },
-    };
+    user = await tradeTokenForUser(token);
   } catch (error) {
     console.error(error);
-    return {
-      props: {
-        user: null,
-      },
-    };
   }
+
+  return {
+    props: {
+      user,
+    },
+  };
 };
