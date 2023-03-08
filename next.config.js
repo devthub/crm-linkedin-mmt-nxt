@@ -4,7 +4,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: "/api/auth/:path*",
+        source: "/:path*",
         has: [
           // eslint-disable-next-line no-useless-escape
           {
