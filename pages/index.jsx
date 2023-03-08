@@ -67,7 +67,7 @@ export default function Home({ user }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      console.log("user", user);
+      console.log("useEffect:>>user", user);
       setUserData(user);
       setVisible(user?.success);
 
@@ -93,6 +93,8 @@ export default function Home({ user }) {
     setUserData({ ...userData, rejected: true });
   };
 
+  console.log("index ::>user", user);
+
   if (isLoading) {
     return (
       <div className={styles.container}>
@@ -101,7 +103,7 @@ export default function Home({ user }) {
     );
   }
 
-  if (!user) {
+  if (!user?.success) {
     return (
       <>
         <Toast ref={toast} />

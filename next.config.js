@@ -39,7 +39,9 @@ module.exports = {
   publicRuntimeConfig: {
     apiUrl:
       process.env.NODE_ENV === "development"
-        ? "https://crm-linkedin-mmt-nxt.vercel.app/api"
-        : "http://localhost:3000/api",
+        ? "http://localhost:3000/api"
+        : process.env.NODE_ENV === "preview"
+        ? "https://crm-linkedin-mmt-nxt-git-develop-brodwen83.vercel.app"
+        : "https://crm-linkedin-mmt-nxt.vercel.app/api",
   },
 };

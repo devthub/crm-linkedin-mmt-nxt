@@ -35,10 +35,6 @@ export default function MMTUserDetails({
   const router = useRouter();
 
   useEffect(() => {
-    const crmUrt = myLS.getItem("_urt");
-  }, []);
-
-  useEffect(() => {
     const crmapi = myLS.getItem("_seerem_k");
 
     if (crmapi) {
