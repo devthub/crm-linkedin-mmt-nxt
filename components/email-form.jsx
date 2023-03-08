@@ -21,108 +21,19 @@ const validationSchema = yup.object({
     .required("Email is required"),
 });
 
-export default function EmailForm() {
-  const { userData, setUserData } = useUserContext();
+export default function EmailForm({
+  onSubmitActivationId,
+  onSubmitOtp,
+  showOtpForm,
+}) {
   const toast = useRef(null);
-  const router = useRouter();
-  const [showOtpForm, setShowOtpForm] = useState(false);
-
-  const showMessageToast = (props) => toast.current.show({ ...props });
-
-  const handleSubmit = async (values, { setSubmitting }) => {
-    try {
-      const { data } = await axios(`/api/v1/lookup?email=${values.email}`);
-
-      if (Object.keys(data).length === 0) {
-        throw new Error("Could not find data.");
-      }
-
-      setUserData(data);
-
-      myLS.setItem("_urt", {
-        user_id: data?.user.user_id,
-        activation_id: data?.user?.activation_id,
-      });
-
-      showMessageToast({
-        severity: "success",
-        summary: "Record Found:",
-        detail: "MMT record found",
-        life: 3000,
-      });
-
-      // router.push(
-      //   `/${data?.user_id}?activation_id=${data?.activation_id}`,
-      //   undefined,
-      //   { shallow: true }
-      // );
-      setShowOtpForm(true);
-      router.push(`/?email=${values.email}`, undefined, { shallow: true });
-    } catch (error) {
-      console.error(error.message);
-      showMessageToast({
-        severity: "error",
-        summary: "Failed:",
-        detail: "Could not find activation id",
-        life: 3000,
-      });
-
-      setShowOtpForm(false);
-    }
-
-    setSubmitting(false);
-  };
-
-  const handleOTPVerification = async (otpCode) => {
-    console.log("handleOTPVerification fn called");
-    try {
-      const { data } = await axios.post(`/api/v1/verify-otp`, {
-        email: router.query?.email,
-        otp: otpCode,
-      });
-
-      setUserData(data);
-
-      myLS.setItem("_urt", {
-        user_id: data?.user?.user_id,
-        activation_id: data?.user?.activation_id,
-      });
-
-      showMessageToast({
-        severity: "success",
-        summary: "Success",
-        detail: "OTP Verified.",
-        life: 3000,
-      });
-
-      console.log("OTP::>data", data);
-
-      setShowOtpForm(false);
-      console.log("before push email form ::>router.query", router.query);
-      router.push(`/${data?.user_id}`, undefined, { shallow: true });
-      // router.push(
-      //   `/${data?.user_id}?activation_id=${data?.activation_id}`,
-      //   undefined,
-      //   { shallow: true }
-      // );
-    } catch (error) {
-      console.error(error);
-
-      showMessageToast({
-        severity: "error",
-        summary: "Failed:",
-        detail: "Invalid code.",
-        life: 3000,
-      });
-    }
-  };
 
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: validationSchema,
-    onSubmit: handleSubmit,
+    onSubmit: onSubmitActivationId,
   });
 
   const isFormFieldValid = (name) =>
@@ -135,14 +46,10 @@ export default function EmailForm() {
     );
   };
 
-  console.log("email form ::>userData", userData);
-
   return (
     <>
-      <Toast ref={toast} />
-
       {showOtpForm ? (
-        <OtpForm onVerifyOTP={handleOTPVerification} />
+        <OtpForm onVerifyOTP={onSubmitOtp} />
       ) : (
         <div className={styles.formDemo}>
           <div className="flex justify-content-center">

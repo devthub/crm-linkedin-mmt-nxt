@@ -1,14 +1,9 @@
-const nodemailer = require('nodemailer');
+import nodemailer from "nodemailer";
 
-module.exports = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 587,
-  secure: false, // true for 465, false for other ports
+export const transporter = nodemailer.createTransport({
+  host: process.env.NEXT_PUBLIC_SMTP_HOST,
   auth: {
-    user: process.env.SMTP_AUTH_USER,
-    pass: process.env.SMTP_AUTH_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
+    user: process.env.NEXT_PUBLIC_SMTP_USER,
+    pass: process.env.NEXT_PUBLIC_SMTP_USER_PASS,
   },
 });
