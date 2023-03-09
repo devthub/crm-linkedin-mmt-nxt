@@ -1,4 +1,3 @@
-import { verify } from "jsonwebtoken";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,7 +9,6 @@ import styles from "../styles/Home.module.css";
 import axios from "axios";
 import PrimeReact from "primereact/api";
 import { Toast } from "primereact/toast";
-import OtpForm from "../components/otp-form";
 import PromptActivationLink from "../components/prompt-activation-link";
 import { useUserContext } from "../contexts/user-provider";
 import { extractCookie, isEmpty } from "../helpers/common";
@@ -42,7 +40,6 @@ export default function Home({ user }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      console.log("useEffect:>>user", user);
       setUserData(user);
       setVisible(user?.success);
 
@@ -50,7 +47,6 @@ export default function Home({ user }) {
         window.localStorage.getItem("crm-linkedin-activate")
       );
       if (crmLinkedin?.activated) {
-        console.log("Not activated");
         setChecked(true);
       }
 
@@ -114,7 +110,6 @@ export default function Home({ user }) {
   };
 
   const handleOTPVerification = async (otpCode) => {
-    console.log("handleOTPVerification fn called");
     try {
       const { data } = await axios.post(`/api/v1/verify-otp`, {
         email: router.query?.email,
@@ -135,9 +130,6 @@ export default function Home({ user }) {
         life: 3000,
       });
 
-      console.log("OTP::>data", data);
-
-      console.log("before push email form ::>router.query", router.query);
       // router.push(`/${data?.user_id}`, undefined, { shallow: true });
       router.push(
         `/${data?.user_id}?activation_id=${data?.activation_id}`,
@@ -156,8 +148,6 @@ export default function Home({ user }) {
     }
   };
 
-  console.log("index ::>user", user);
-
   if (isLoading) {
     return (
       <div className={styles.container}>
@@ -167,7 +157,6 @@ export default function Home({ user }) {
   }
 
   if (!checked) {
-    console.log("!checked", !checked);
     return (
       <>
         <Toast ref={toast} />

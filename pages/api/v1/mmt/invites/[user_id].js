@@ -1,4 +1,3 @@
-import axios from "axios";
 import { isEmpty } from "../../../../../helpers/common";
 
 export default async function handler(req, res) {

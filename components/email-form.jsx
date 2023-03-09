@@ -1,18 +1,13 @@
-import axios from "axios";
 import { useFormik } from "formik";
-import { useRouter } from "next/router";
-import { createRef, memo, useRef, useState } from "react";
 import * as yup from "yup";
 
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
 
-import { useUserContext } from "../contexts/user-provider";
-import { myLS } from "../utils/ls";
-import styles from "./email-form.module.css";
 import OtpForm from "./otp-form";
+
+import styles from "./email-form.module.css";
 
 const validationSchema = yup.object({
   email: yup
@@ -26,8 +21,6 @@ export default function EmailForm({
   onSubmitOtp,
   showOtpForm,
 }) {
-  const toast = useRef(null);
-
   const formik = useFormik({
     initialValues: {
       email: "",

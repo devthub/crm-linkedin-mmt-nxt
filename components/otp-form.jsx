@@ -1,6 +1,7 @@
+import { useState } from "react";
+
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { createRef, useEffect, useMemo, useRef, useState } from "react";
 
 const OtpForm = ({ onVerifyOTP }) => {
   const [otp, setOtp] = useState("");
@@ -38,7 +39,6 @@ export default OtpForm;
 
 // https://reacthustle.com/blog/how-to-build-a-react-otp-input-using-daisyui
 export const OtpInput = ({
-  itemsRef,
   size = 6,
   validationPattern = /[0-9]{1}/,
   value,

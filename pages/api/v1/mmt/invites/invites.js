@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
-  const { query } = req;
-  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
+  // const { query } = req;
+  // const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
 
   // let mmtURI = "";
 

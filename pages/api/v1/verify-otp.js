@@ -24,12 +24,9 @@ async function verifyOtpHandler(req, res) {
         });
       }
 
-      console.log("verify-otp handler::> user", user);
-
       const otpVerified = user.verifyOtp(otp);
 
       if (!otpVerified) {
-        console.log("verified OTP");
         return res.status(404).json({
           message: "Invalid code.",
           success: false,

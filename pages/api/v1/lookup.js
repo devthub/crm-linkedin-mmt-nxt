@@ -6,7 +6,6 @@ import { isEmpty } from "../../../helpers/common";
 import User from "../../../models/User";
 import dbConnect from "../../../utils/config/dbConnect";
 import cookies from "../../../utils/cookies";
-import { createUserToken } from "../../../utils/tokens";
 import { transporter } from "../../../utils/transporter";
 
 async function handler(req, res) {
@@ -73,11 +72,11 @@ async function handler(req, res) {
       },
       function (err, info) {
         if (err) {
-          console.log(err);
+          console.error("Error sending OTP ::>", err);
           throw new Error("Send OTP Error");
         } else {
+          // eslint-disable-next-line no-console
           console.log("Email sent: " + info.response);
-          // do something useful
         }
       }
     );
@@ -85,11 +84,6 @@ async function handler(req, res) {
     const userEmail = mmtRecordExists?.data.data?.[0]?.email;
     const user_id = mmtRecordExists?.data?.data?.[0]?.user_id;
     const mmtUser = mmtRecordExists?.data?.data?.[0];
-
-    console.log(
-      "mmtRecordExists?.data?.data?.[0]",
-      mmtRecordExists?.data?.data?.[0]
-    );
 
     const user = await User.findOneAndUpdate(
       { email: userEmail },
@@ -107,19 +101,12 @@ async function handler(req, res) {
       { new: true, upsert: true }
     );
 
-    console.log("user", user);
-
     const userToken = "";
     setAccessToken(userToken);
     res.cookie("mmt-crm", userToken);
     res.setHeader("Set-Cookie", [
       serialize("mmt-crm", userToken, { path: "/" }),
     ]);
-
-    console.log(
-      "lookupHandler:>>mmtRecordExists?.data?.data?.[0]",
-      mmtRecordExists?.data?.data?.[0]
-    );
 
     res.status(200).send({
       success: true,

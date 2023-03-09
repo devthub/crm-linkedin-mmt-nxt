@@ -1,17 +1,15 @@
-import React, { useRef, useState, useEffect } from "react";
 import { useFormik } from "formik";
+import React, { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { ToggleButton } from "primereact/togglebutton";
 import { Checkbox } from "primereact/checkbox";
-import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
+import { InputText } from "primereact/inputtext";
 
 import { classNames } from "primereact/utils";
 
-import styles from "./email-form.module.css";
 import { myLS } from "../utils/ls";
+import styles from "./email-form.module.css";
 
 const activationLinkEmailSchema = yup.object({
   email: yup

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { sign, verify } from "jsonwebtoken";
 
 export const WEEK_IN_MS = parseInt("604800000‬");
@@ -43,7 +44,7 @@ export function sendAccessToken(res, token) {
 //   path: '/',
 // }
 
-export function verifyRefreshToken(token, res) {
+export function verifyRefreshToken(token, _res) {
   // return verify(token, process.env.JWT_REFRESH_SECRET);
   try {
     return verify(token, process.env.JWT_REFRESH_SECRET);
