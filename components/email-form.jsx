@@ -20,6 +20,7 @@ export default function EmailForm({
   onSubmitActivationId,
   onSubmitOtp,
   showOtpForm,
+  isSubmittingOTP,
 }) {
   const formik = useFormik({
     initialValues: {
@@ -42,7 +43,7 @@ export default function EmailForm({
   return (
     <>
       {showOtpForm ? (
-        <OtpForm onVerifyOTP={onSubmitOtp} />
+        <OtpForm onVerifyOTP={onSubmitOtp} isSubmittingOTP={isSubmittingOTP} />
       ) : (
         <div className={styles.formDemo}>
           <div className="flex justify-content-center">

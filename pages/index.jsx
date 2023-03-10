@@ -26,6 +26,7 @@ export default function Home({ user }) {
   const [showOtpForm, setShowOtpForm] = useState(false);
   const toast = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmittingOTP, setIsSubmittingOTP] = useState(false);
 
   const router = useRouter();
   const showMessageToast = (props) => toast.current.show({ ...props });
@@ -110,6 +111,7 @@ export default function Home({ user }) {
   };
 
   const handleOTPVerification = async (otpCode) => {
+    setIsSubmittingOTP(true);
     try {
       const { data } = await axios.post(`/api/v1/verify-otp`, {
         email: router.query?.email,
@@ -129,6 +131,8 @@ export default function Home({ user }) {
         detail: "OTP Verified.",
         life: 3000,
       });
+
+      setIsSubmittingOTP(false);
 
       // router.push(`/${data?.user_id}`, undefined, { shallow: true });
       router.push(
@@ -185,6 +189,7 @@ export default function Home({ user }) {
               onSubmitOtp={handleOTPVerification}
               showOtpForm={showOtpForm}
               setShowOtpForm={setShowOtpForm}
+              isSubmittingOTP={isSubmittingOTP}
             />
           </main>
         </div>
@@ -216,6 +221,7 @@ export default function Home({ user }) {
             onSubmitOtp={handleOTPVerification}
             showOtpForm={showOtpForm}
             setShowOtpForm={setShowOtpForm}
+            isSubmittingOTP={isSubmittingOTP}
           />
         </main>
       </div>
