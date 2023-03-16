@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
+import { useRouter } from "next/router";
 import { TabMenu } from "primereact/tabmenu";
-import { Button } from "primereact/button";
-import Router, { useRouter } from "next/router";
 
 export default function NavMenu({ setActiveIndex, activeIndex }) {
   const router = useRouter();

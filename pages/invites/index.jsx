@@ -1,21 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Dialog } from "primereact/dialog";
+import React, { useRef, useState } from "react";
 
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import { Toast } from "primereact/toast";
 
 export default function Invites({ invites }) {
-  const [invitesData, setInvitesData] = useState({});
   const [selectedInvitee, setSelectedInvitee] = useState(null);
   const [showInviteeDetailsModal, setShowInviteeDetailsModal] = useState(false);
 
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  const onRowSelect = (event) => {
+  const onRowSelect = (_event) => {
     setShowInviteeDetailsModal(true);
   };
 
@@ -132,12 +131,13 @@ export default function Invites({ invites }) {
   );
 }
 
-export const getServerSideProps = async (ctx) => {
-  const mmtURI = `https://api.mymosttrusted.net/v1/network/41/invites`;
+export const getServerSideProps = async () => {
+  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
+
+  const mmtURI = `${mmtAPIBaseUri}/invites`;
   const invites = await fetch(mmtURI, {
     headers: {
-      Authorization:
-        "Bearer -MNDSqBJQ0LF4ueM6nxzhM-MQROrV87h2tbBrt2Vl6CGzUIWtH-/8I5rYrnD0jwG",
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_INVITES_API}`,
     },
   });
 

@@ -1,12 +1,13 @@
 export default async function handler(req, res) {
-  const { query } = req;
+  // const { query } = req;
+  // const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
 
   // let mmtURI = "";
 
   // if (isEmpty(query)) {
-  //   mmtURI = `https://api.mymosttrusted.net/v1/network/41/invites`;
+  //   mmtURI = `${mmtAPiBaseUri}/invites`;
   // } else {
-  //   mmtURI = `https://api.mymosttrusted.net/v1/network/41/invites/${query?.user_id}`;
+  //   mmtURI = `${mmtAPiBaseUri}/invites/${query?.user_id}`;
   // }
 
   // try {

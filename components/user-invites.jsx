@@ -1,21 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import React, { useRef, useState } from "react";
 
-import { Dialog } from "primereact/dialog";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
 import { Checkbox } from "primereact/checkbox";
-import { Paginator } from "primereact/paginator";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
 
-import CRMContactForm from "./crm-contact-form";
+import { Inplace, InplaceContent, InplaceDisplay } from "primereact/inplace";
+import { InputText } from "primereact/inputtext";
 import { useUserContext } from "../contexts/user-provider";
 import { isEmpty, sleep } from "../helpers/common";
-import { Inplace, InplaceContent, InplaceDisplay } from "primereact/inplace";
 import { truncateAPIKEY } from "../pages/[user_id]";
-import { InputText } from "primereact/inputtext";
+import CRMContactForm from "./crm-contact-form";
 
 export default function UserInvites({
   invites,
@@ -31,7 +30,6 @@ export default function UserInvites({
   const { crmAPIText } = useUserContext();
   const [selectedInvitee, setSelectedInvitee] = useState(null);
   const [showInviteeDetailsModal, setShowInviteeDetailsModal] = useState(false);
-  const [exportLoadingState, setExportLoadingState] = useState(false);
   const [exportXLSLoadingState, setExportXLSLoadingState] = useState(false);
   const [exportPDFLoadingState, setExportPDFLoadingState] = useState(false);
   const [selectedAcceptedInvites, setSelectedAcceptedInvites] = useState(null);
@@ -42,6 +40,7 @@ export default function UserInvites({
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
 
+  // eslint-disable-next-line no-unused-vars
   const onRowSelect = () => {
     setShowInviteeDetailsModal(true);
   };
@@ -64,7 +63,7 @@ export default function UserInvites({
     );
   };
 
-  const renderAPIModalFooter = (name) => {
+  const renderAPIModalFooter = (_name) => {
     return (
       <div className="mt-3">
         <Button
@@ -242,9 +241,9 @@ export default function UserInvites({
     setExportXLSLoadingState(true);
     import("file-saver").then((module) => {
       if (module && module.default) {
-        let EXCEL_TYPE =
+        const EXCEL_TYPE =
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-        let EXCEL_EXTENSION = ".xlsx";
+        const EXCEL_EXTENSION = ".xlsx";
         const data = new Blob([buffer], {
           type: EXCEL_TYPE,
         });
@@ -369,6 +368,7 @@ export default function UserInvites({
     return isSelectable(data.email, "email") ? "" : "p-disabled";
   };
 
+  // eslint-disable-next-line no-unused-vars
   const onBasicPageChange = (event) => {
     setBasicFirst(event.first);
     setBasicRows(event.rows);

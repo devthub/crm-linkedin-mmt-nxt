@@ -1,7 +1,4 @@
-import { useEffect } from "react";
 import { InputText } from "primereact/inputtext";
-import { useUserContext } from "../contexts/user-provider";
-import { myLS } from "../utils/ls";
 
 export default function UserDetails({ userDetails }) {
   return (

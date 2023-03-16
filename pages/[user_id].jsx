@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { TabView, TabPanel } from "primereact/tabview";
 import { BreadCrumb } from "primereact/breadcrumb";
+import { TabPanel, TabView } from "primereact/tabview";
 
 import CustomMessages from "../components/custom-messages";
 
+import Image from "next/image";
 import UserDetails from "../components/user-details";
 import UserInvites from "../components/user-invites";
-import { isEmpty } from "../helpers/common";
-import Image from "next/image";
 import { useUserContext } from "../contexts/user-provider";
+import { isEmpty } from "../helpers/common";
 import { myLS } from "../utils/ls";
 
 export const truncateAPIKEY = (str, n) =>
@@ -92,6 +92,14 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     setIsFetchingInvitesLoadingState(false);
   };
 
+  if (userConfig?.code || userInvites?.code)
+    return (
+      <div
+        style={{ height: "90vh" }}
+        className="flex justify-content-center align-items-center"
+      >{`Error ${userConfig?.code}, ${userConfig?.message}`}</div>
+    );
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -167,8 +175,10 @@ export const getServerSideProps = async (ctx) => {
   let userConfig = null;
   let userInvites = null;
 
+  const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
+
   try {
-    const mmtURI = `https://api.mymosttrusted.net/v1/network/41/users?page=1&limit=50&activation_id=${query?.activation_id}`;
+    const mmtURI = `${mmtAPIBaseUri}/users?page=1&limit=50&activation_id=${query?.activation_id}`;
 
     const mmtRecordExists = await fetch(mmtURI, {
       headers: {
@@ -178,7 +188,7 @@ export const getServerSideProps = async (ctx) => {
 
     user = await mmtRecordExists.json();
 
-    const mmt2ConfigURI = `https://api.mymosttrusted.net/v1/network/41/config/${user.data[0]?.user_id}`;
+    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${user.data[0]?.user_id}`;
 
     const response = await fetch(mmt2ConfigURI, {
       headers: {
@@ -188,7 +198,7 @@ export const getServerSideProps = async (ctx) => {
 
     userConfig = await response.json();
 
-    const mmtInvitesURI = `https://api.mymosttrusted.net/v1/network/41/invites/${user.data[0]?.user_id}`;
+    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${user.data[0]?.user_id}`;
     const invitesResponse = await fetch(mmtInvitesURI, {
       headers: {
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,

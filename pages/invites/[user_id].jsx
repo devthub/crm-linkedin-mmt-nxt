@@ -1,7 +1,6 @@
 import React from "react";
-import axios from "axios";
 
-export default function InviteeDetails({ data }) {
+export default function InviteeDetails({ _data }) {
   return <div>InviteeDetails</div>;
 }
 
