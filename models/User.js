@@ -1,5 +1,22 @@
 import mongoose from "mongoose";
 
+const AccessTokenSchema = new mongoose.Schema(
+  {
+    access_token: String,
+    token_type: String,
+    expires_in: Number,
+    refresh_token: String,
+    scope: String,
+    userType: String,
+    companyId: String,
+    locationId: String,
+    userId: String,
+  },
+  {
+    strict: false,
+  }
+);
+
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -18,6 +35,7 @@ const UserSchema = new mongoose.Schema({
   activation_id: String,
   otp: String,
   backupOtpCodes: [{ type: String }],
+  ghlOAuth: AccessTokenSchema,
 });
 
 UserSchema.methods.verifyOtp = function verifyOtp(otp) {
