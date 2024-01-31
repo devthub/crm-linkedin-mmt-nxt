@@ -82,6 +82,7 @@ export default function UserInvites({
   const handleSubmit = async (values) => {
     try {
       const { data } = await axios.post(`/api/v2/contacts/`, {
+        activationId: router.query?.activation_id,
         firstName: values?.firstName ? values?.firstName : values?.first_name,
         lastName: values?.lastName ? values?.lastName : values?.last_name,
         email: values?.email,
