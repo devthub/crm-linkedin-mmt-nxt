@@ -1,3 +1,5 @@
+import { getBaseURI } from "../../../../helpers/common";
+
 const CLIENT_ID = process.env.NEXT_PUBLIC_GHL_CLIENT_ID;
 const BASE_URL = process.env.NEXT_PUBLIC_GHL_BASE_URL;
 
@@ -7,7 +9,7 @@ export default async function handler(req, res) {
 
   const options = {
     requestType: "code",
-    redirectUrl: `http://localhost:3000/api/v2/oauth/callback`,
+    redirectUrl: `${getBaseURI()}api/v2/oauth/callback`,
     clientId: CLIENT_ID,
     scopes: ["contacts.write", "contacts.readonly"],
   };

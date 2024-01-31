@@ -2,6 +2,7 @@ import axios from "axios";
 import { serialize } from "cookie";
 import qs from "qs";
 import { setAccessToken } from "../../../../globals/auth";
+import { getBaseURI } from "../../../../helpers/common";
 import User from "../../../../models/User";
 import dbConnect from "../../../../utils/config/dbConnect";
 import cookies from "../../../../utils/cookies";
@@ -25,7 +26,7 @@ async function callbackHandler(req, res) {
       grant_type: "authorization_code",
       code: req.query.code,
       user_type: "Location",
-      redirect_uri: "http://localhost:3000/api/v2/oauth/callback",
+      redirect_uri: `${getBaseURI()}api/v2/oauth/callback`,
     });
 
     const config = {
