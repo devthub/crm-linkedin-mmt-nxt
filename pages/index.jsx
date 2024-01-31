@@ -149,6 +149,8 @@ export default function Home({ user }) {
         detail: "Invalid code.",
         life: 3000,
       });
+    } finally {
+      setIsSubmittingOTP(false);
     }
   };
 
