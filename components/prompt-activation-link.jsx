@@ -75,7 +75,7 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
 
   // eslint-disable-next-line no-unused-vars
   const handleInitiateGHL = async () => {
-    await axios.get("http://localhost:3000/api/v2/ghl/initiate");
+    await axios.get("/api/v2/ghl/initiate");
   };
 
   return (

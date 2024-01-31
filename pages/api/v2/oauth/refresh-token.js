@@ -1,5 +1,6 @@
 import axios from "axios";
 import qs from "qs";
+import { getBaseURI } from "../../../../helpers/common";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GHL_CLIENT_ID;
 const CLIENT_SECRET = process.env.NEXT_PUBLIC_GHL_CLIENT_SECRET;
@@ -11,7 +12,7 @@ export default async function handler(req, res) {
     grant_type: "refresh_token",
     refresh_token: req.query.token,
     user_type: "Location",
-    redirect_uri: "http://localhost:3000/oauth/callback",
+    redirect_uri: `${getBaseURI()}oauth/callback`,
   });
 
   const config = {
