@@ -5,7 +5,15 @@ import dbConnect from "../../../utils/config/dbConnect";
 
 export default async function handler(req, res) {
   const {
-    body: { firstName, lastName, email, tags, crmAPI, locationId },
+    body: {
+      activationId,
+      firstName,
+      lastName,
+      email,
+      tags,
+      crmAPI,
+      locationId,
+    },
   } = req;
 
   let ghlToken = "";
@@ -17,7 +25,7 @@ export default async function handler(req, res) {
       await dbConnect();
 
       const user = await User.findOne({
-        $or: [{ activation_id: email }, { email }],
+        $or: [{ activation_id: activationId }, { email: activationId }],
       });
 
       if (!user) {
