@@ -9,10 +9,11 @@ import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 
+import { useRouter } from "next/router";
 import { Inplace, InplaceContent, InplaceDisplay } from "primereact/inplace";
 import { InputText } from "primereact/inputtext";
 import { useUserContext } from "../contexts/user-provider";
-import { isEmpty, sleep } from "../helpers/common";
+import { isEmpty } from "../helpers/common";
 import { truncateAPIKEY } from "../pages/[user_id]";
 import CRMContactForm from "./crm-contact-form";
 
@@ -39,6 +40,8 @@ export default function UserInvites({
 
   const toast = useRef(null);
   const showMessageToast = (props) => toast.current.show({ ...props });
+
+  const router = useRouter();
 
   // eslint-disable-next-line no-unused-vars
   const onRowSelect = () => {
@@ -78,14 +81,24 @@ export default function UserInvites({
 
   const handleSubmit = async (values) => {
     try {
-      await axios.post(`/api/v1/contacts/`, {
+      const { data } = await axios.post(`/api/v2/contacts/`, {
         firstName: values?.firstName ? values?.firstName : values?.first_name,
         lastName: values?.lastName ? values?.lastName : values?.last_name,
         email: values?.email,
         phone: values.phone,
         tags: values?.tags?.map((tag) => tag.tag_name),
         crmAPI: crmAPIText,
+        locationId: router.query?.locationId,
       });
+
+      if (!data.ok) {
+        showMessageToast({
+          severity: "error",
+          summary: "Failed:",
+          detail: data?.message,
+          life: 3000,
+        });
+      }
 
       showMessageToast({
         severity: "success",
@@ -98,16 +111,37 @@ export default function UserInvites({
 
       setShowInviteeDetailsModal(false);
     } catch (error) {
-      console.error(error.code);
-      showMessageToast({
-        severity: "error",
-        summary: "Failed:",
-        detail: "Please provide API key and try again. ",
-        life: 3000,
-      });
+      console.error(error);
 
-      await sleep(100);
-      setShowEnterAPIKeyModal(true);
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        // Handle the 400 error response
+        console.error(error.response?.data);
+
+        showMessageToast({
+          severity: "error",
+          summary: "Failed:",
+          detail: error.response?.data?.message,
+          life: 3000,
+        });
+
+        if (error.response?.data?.message === "Missing API key!") {
+          router.push(
+            `/api/v2/ghl/initiate?state=${JSON.stringify(router.query)}`
+          );
+        }
+      } else {
+        // Handle other errors
+        console.error(error);
+        showMessageToast({
+          severity: "error",
+          summary: "Failed:",
+          detail: error.message,
+          life: 3000,
+        });
+      }
+
+      // router.push(`/api/v2/ghl/initiate?state=${JSON.stringify(router.query)}`);
+      // setShowEnterAPIKeyModal(true);
     }
   };
 

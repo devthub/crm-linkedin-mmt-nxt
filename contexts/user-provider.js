@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const UserContext = createContext();
 
@@ -7,6 +7,19 @@ export function UserProvider({ children }) {
   const [userData, setUserData] = useState(null);
   const [invites, setInvites] = useState([]);
   const [crmAPIText, setCrmAPIText] = useState("");
+
+  const [cookie, setCookie] = useState("");
+
+  useEffect(() => {
+    const cookies = document.cookie.split(";");
+    const cookieMap = {};
+    cookies.forEach((cookie) => {
+      const [name, value] = cookie.trim().split("=");
+      cookieMap[name] = value;
+    });
+    setCookie(cookieMap["ghl-crm"]);
+    setCrmAPIText(cookieMap["ghl-crm"]);
+  }, []);
 
   return (
     <UserContext.Provider

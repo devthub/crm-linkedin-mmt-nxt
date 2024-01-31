@@ -13,12 +13,12 @@ import { isEmpty } from "../helpers/common";
 import { myLS } from "../utils/ls";
 
 export const truncateAPIKEY = (str, n) =>
-  str.length > n
-    ? str.substr(0, n - 25) +
+  str?.length > n
+    ? str?.substr(0, n - 25) +
       "*****-*****-*****-*****-*****-*****-*****-" +
-      str.slice(str.length - 6, str.length - 1)
-    : str.length >= 5 && str.length <= n
-    ? str.slice(0, 1) + " ***"
+      str?.slice(str?.length - 6, str?.length - 1)
+    : str?.length >= 5 && str?.length <= n
+    ? str?.slice(0, 1) + " ***"
     : str;
 
 export default function MMTUserDetails({ user, userConfig, userInvites }) {
@@ -167,54 +167,55 @@ export default function MMTUserDetails({ user, userConfig, userInvites }) {
     </>
   );
 }
-
 export const getServerSideProps = async (ctx) => {
   const { query } = ctx;
-
-  let user = null;
-  let userConfig = null;
-  let userInvites = null;
-
   const mmtAPIBaseUri = process.env.NEXT_PUBLIC_MMT_API_BASE_URI;
 
   try {
     const mmtURI = `${mmtAPIBaseUri}/users?page=1&limit=50&activation_id=${query?.activation_id}`;
-
     const mmtRecordExists = await fetch(mmtURI, {
       headers: {
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,
       },
     });
+    const userData = await mmtRecordExists.json();
 
-    user = await mmtRecordExists.json();
+    const userConfigURI = `${mmtAPIBaseUri}/config/${userData.data[0]?.user_id}`;
+    const invitesURI = `${mmtAPIBaseUri}/invites/${userData.data[0]?.user_id}`;
 
-    const mmt2ConfigURI = `${mmtAPIBaseUri}/config/${user.data[0]?.user_id}`;
+    const [userConfigResponse, invitesResponse] = await Promise.all([
+      fetch(userConfigURI, {
+        headers: {
+          Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+        },
+      }),
+      fetch(invitesURI, {
+        headers: {
+          Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+        },
+      }),
+    ]);
 
-    const response = await fetch(mmt2ConfigURI, {
-      headers: {
-        Authorization: `Bearer ${process.env.MMT_API_KEY}`,
+    const [userConfig, userInvites] = await Promise.all([
+      userConfigResponse.json(),
+      invitesResponse.json(),
+    ]);
+
+    return {
+      props: {
+        user: userData?.data[0],
+        userConfig,
+        userInvites,
       },
-    });
-
-    userConfig = await response.json();
-
-    const mmtInvitesURI = `${mmtAPIBaseUri}/invites/${user.data[0]?.user_id}`;
-    const invitesResponse = await fetch(mmtInvitesURI, {
-      headers: {
-        Authorization: `Bearer ${process.env.MMT_API_KEY}`,
-      },
-    });
-
-    userInvites = await invitesResponse.json();
+    };
   } catch (error) {
     console.error(error);
+    return {
+      props: {
+        user: null,
+        userConfig: null,
+        userInvites: null,
+      },
+    };
   }
-
-  return {
-    props: {
-      user: user?.data[0],
-      userConfig,
-      userInvites,
-    },
-  };
 };
