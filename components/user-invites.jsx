@@ -114,18 +114,29 @@ export default function UserInvites({
     } catch (error) {
       console.error(error);
 
-      if (axios.isAxiosError(error) && error.response?.status === 400) {
+      if (axios.isAxiosError(error)) {
         // Handle the 400 error response
         console.error(error.response?.data);
 
         showMessageToast({
           severity: "error",
           summary: "Failed:",
-          detail: error.response?.data?.message,
+          detail: error.response?.data?.message || error.response?.data?.error,
           life: 3000,
         });
 
-        if (error.response?.data?.message === "Missing API key!") {
+        if (
+          (error.response?.data?.error &&
+            error.response?.data?.error === "Token missing for user!") ||
+          error.response?.data?.message === "Missing API key!" ||
+          error.response?.data?.message === "Token missing for user!" ||
+          error.response?.data?.message === "Please provide location Id!" ||
+          error.response?.data?.message ===
+            "The token does not have access to this location." ||
+          error.response?.data?.message === "Invalid JWT" ||
+          error.response?.data?.message ===
+            "This authClass type is not allowed to access this scope. Please reach out to the Platform team to get it added."
+        ) {
           router.push(
             `/api/v2/ghl/initiate?state=${JSON.stringify(router.query)}`
           );
@@ -133,10 +144,11 @@ export default function UserInvites({
       } else {
         // Handle other errors
         console.error(error);
+
         showMessageToast({
           severity: "error",
           summary: "Failed:",
-          detail: error.message,
+          detail: error.response?.data?.message || error.message,
           life: 3000,
         });
       }
