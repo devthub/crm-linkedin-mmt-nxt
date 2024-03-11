@@ -60,3 +60,14 @@ export function verifyAccessToken(token) {
     throw error;
   }
 }
+
+export function isTokenExpired(expirationTime) {
+  // Convert the expiration time from seconds to milliseconds
+  const expirationMillis = expirationTime * 1000;
+
+  // Get the current time in milliseconds
+  const currentTimeMillis = Date.now();
+
+  // Compare the current time with the expiration time
+  return currentTimeMillis > expirationMillis;
+}

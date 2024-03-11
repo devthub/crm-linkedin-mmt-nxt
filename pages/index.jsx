@@ -32,11 +32,18 @@ export default function Home({ user }) {
   const showMessageToast = (props) => toast.current.show({ ...props });
 
   const redirectToUserPage = () => {
+    // router.push(
+    //   `/${userData?.user?.user_id || loggedInUser?.user_id}?activation_id=${
+    //     userData?.user?.activation_id || loggedInUser.activation_id
+    //   }`
+    // );
     router.push(
-      `/${userData?.user?.user_id || loggedInUser?.user_id}?activation_id=${
-        userData?.user?.activation_id || loggedInUser.activation_id
-      }`
+      `/?email=${userData?.user?.activation_id || loggedInUser.activation_id}`,
+      undefined,
+      { shallow: true }
     );
+
+    setShowOtpForm(true);
   };
 
   useEffect(() => {
@@ -149,6 +156,8 @@ export default function Home({ user }) {
         detail: "Invalid code.",
         life: 3000,
       });
+    } finally {
+      setIsSubmittingOTP(false);
     }
   };
 

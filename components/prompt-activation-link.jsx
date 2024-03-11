@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
@@ -16,7 +17,7 @@ const activationLinkEmailSchema = yup.object({
     .string("Enter your email")
     .email("Enter a valid email")
     .required("Email is required"),
-  crmApi: yup.string("Enter CRM API").required("Please enter your CRM API"),
+  crmApi: yup.string("Enter CRM API"),
 });
 
 function PromptActivationLink({ alreadyActivated, setChecked }) {
@@ -72,12 +73,17 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
     setChecked(true);
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const handleInitiateGHL = async () => {
+    await axios.get("/api/v2/ghl/initiate");
+  };
+
   return (
     <div>
       <div className="card activated-link-headers">
         <div className="flex flex-column card-container flex-justify-content-center">
           <h1 style={{ textAlign: "center" }}>
-            Have you completed these steps to link CRM-Hub to Linkedin?
+            Have you completed these steps to link Productivity Hub to Linkedin?
           </h1>
           <h2 style={{ textAlign: "center" }}>
             Visited{" "}
@@ -94,8 +100,8 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
             Connected your Linkedin account to myMostTrusted?
           </h2>
           <h2 style={{ textAlign: "center" }}>
-            Link myMostTrusted to CRM-Hub by putting your CRM email address in
-            below and pressing submit
+            Link myMostTrusted to Productivity Hub by putting your Productivity
+            Hub email address in below and pressing submit
           </h2>
 
           <a
@@ -135,7 +141,7 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
               {getFormErrorMessage("email")}
             </div>
 
-            <div className={`${styles.field} p-field mt-5`}>
+            {/* <div className={`${styles.field} p-field mt-5`}>
               <span className="p-float-label p-input-icon-left">
                 <i className="pi pi-lock" />
                 <InputText
@@ -172,7 +178,18 @@ function PromptActivationLink({ alreadyActivated, setChecked }) {
               </span>
 
               <div>{getFormErrorMessage("email")}</div>
-            </div>
+            </div> */}
+
+            {/* <Button
+              className="mt-5"
+              label="Initiate Access Token"
+              icon="pi pi-send"
+              iconPos="right"
+              // loading={formik.isSubmitting}
+              onClick={() => router.push("/api/v2/ghl/initiate")}
+              // onClick={handleInitiateGHL}
+              type="button"
+            /> */}
 
             <Button
               className="mt-5"

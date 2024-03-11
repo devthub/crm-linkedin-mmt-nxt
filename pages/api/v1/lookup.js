@@ -33,7 +33,7 @@ async function handler(req, res) {
       specialChars: false,
     });
 
-    transporter.sendMail(
+    await transporter.sendMail(
       {
         from: process.env.NEXT_PUBLIC_SMTP_USER,
         to: query?.email,
@@ -69,16 +69,16 @@ async function handler(req, res) {
         <p>Best regards,</p>
         
         <p>Thub Dev Team</p>`,
-      },
-      function (err, info) {
-        if (err) {
-          console.error("Error sending OTP ::>", err);
-          throw new Error("Send OTP Error");
-        } else {
-          // eslint-disable-next-line no-console
-          console.log("Email sent: " + info.response);
-        }
       }
+      // function (err, info) {
+      //   if (err) {
+      //     console.error("Error sending OTP ::>", err);
+      //     throw new Error("Send OTP Error");
+      //   } else {
+      //     // eslint-disable-next-line no-console
+      //     console.log("Email sent: " + info.response);
+      //   }
+      // }
     );
 
     const userEmail = mmtRecordExists?.data.data?.[0]?.email;

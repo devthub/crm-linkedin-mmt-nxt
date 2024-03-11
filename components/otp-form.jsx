@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 
-const OtpForm = ({ onVerifyOTP, isSubmittingOTP }) => {
+const OtpForm = ({ onVerifyOTP, isSubmittingOTP, setShowOtpForm }) => {
   const [otp, setOtp] = useState("");
 
   return (
@@ -27,14 +27,30 @@ const OtpForm = ({ onVerifyOTP, isSubmittingOTP }) => {
             setOtp(val);
           }}
         />
-        <Button
-          className="btn btn-primary mt-4"
-          type="submit"
-          label={isSubmittingOTP ? "Submitting..." : "Submit"}
-          loading={isSubmittingOTP}
-          icon="pi pi-send"
-          iconPos="right"
-        />
+        <div
+          className="flex align-items-center justify-content-between"
+          style={{ width: "100%" }}
+        >
+          <Button
+            className="btn p-button-secondary mt-4"
+            label={"Back"}
+            // loading={isSubmittingOTP}
+            // icon="pi pi-"
+            // iconPos="right"
+            onClick={() => {
+              setShowOtpForm(false);
+              window.location.href = "/";
+            }}
+          />
+          <Button
+            className="btn btn-primary mt-4"
+            type="submit"
+            label={isSubmittingOTP ? "Submitting..." : "Submit"}
+            loading={isSubmittingOTP}
+            icon="pi pi-send"
+            iconPos="right"
+          />
+        </div>
       </div>
     </form>
   );
