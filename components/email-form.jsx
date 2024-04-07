@@ -22,6 +22,8 @@ export default function EmailForm({
   showOtpForm,
   setShowOtpForm,
   isSubmittingOTP,
+  onResendOTP,
+  isResubmittingOTP,
 }) {
   const formik = useFormik({
     initialValues: {
@@ -48,12 +50,17 @@ export default function EmailForm({
           onVerifyOTP={onSubmitOtp}
           isSubmittingOTP={isSubmittingOTP}
           setShowOtpForm={setShowOtpForm}
+          onResendOTP={onResendOTP}
+          isResubmittingOTP={isResubmittingOTP}
         />
       ) : (
         <div className={styles.formDemo}>
           <div className="flex justify-content-center">
             <div className={styles.card}>
               <h5 className="text-center">Enter Email</h5>
+              <p className={styles.textLabel}>
+                The email address for activation used in MMT
+              </p>
               <form onSubmit={formik.handleSubmit} className="p-fluid">
                 <div className={styles.field}>
                   <span className="p-float-label p-input-icon-right">
@@ -73,7 +80,7 @@ export default function EmailForm({
                         "p-error": isFormFieldValid("email"),
                       })}
                     >
-                      Email*
+                      example@domain.con
                     </label>
                   </span>
                   {getFormErrorMessage("email")}

@@ -1,3 +1,9 @@
+.textLabel {
+  color: "#333";
+  font-size: 1rem;
+  text-align: center;
+}
+
 .formDemo .card {
   min-width: 450px;
 }
