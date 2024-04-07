@@ -294,6 +294,7 @@ export default function Home({ user }) {
             showOtpForm={showOtpForm}
             setShowOtpForm={setShowOtpForm}
             isSubmittingOTP={isSubmittingOTP}
+            isResubmittingOTP={isResubmittingOTP}
             onResendOTP={handleSendOTP}
           />
         </main>
