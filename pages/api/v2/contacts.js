@@ -11,26 +11,20 @@ const CLIENT_SECRET = process.env.NEXT_PUBLIC_GHL_CLIENT_SECRET;
 
 export default async function handler(req, res) {
   const {
-    body: {
-      activationId,
-      firstName,
-      lastName,
-      email,
-      tags,
-      crmAPI,
-      locationId,
-    },
+    body: { activationId, firstName, lastName, email, tags, crmAPI },
   } = req;
 
   let ghlToken = "";
 
   ghlToken = `Bearer ${crmAPI}`;
 
+  let user = User | null | undefined;
+
   try {
     if (isEmpty(crmAPI)) {
       await dbConnect();
 
-      const user = await User.findOne({
+      user = await User.findOne({
         $or: [{ activation_id: activationId }, { email: activationId }],
       });
 
@@ -89,16 +83,29 @@ export default async function handler(req, res) {
         }
 
         user.ghlOAuth = response.data;
+
         await user.save();
 
         ghlToken = `Bearer ${response.data?.access_token}`;
       } else ghlToken = `Bearer ${ghlAccessToken}`;
     }
 
-    if (isEmpty(locationId)) throw new Error("Please provide location Id!");
+    // if (isEmpty(locationId)) throw new Error("Please provide location Id!");
 
     // eslint-disable-next-line no-console
     console.log("🚀 ~ handler ~ ghlToken:", ghlToken);
+
+    // console.log(
+    //   "🚀 ~ file: contacts.js:86 ~ handler ~ user.ghlOAuth:",
+    //   user.ghlOAuth
+    // );
+
+    const newLocationId = user?.ghlOAuth?.locationId;
+
+    // console.log(
+    //   "🚀 ~ file: contacts.js:97 ~ handler ~ newLocationId:",
+    //   newLocationId
+    // );
 
     const { data } = await axios.post(
       "https://services.leadconnectorhq.com/contacts/",
@@ -107,7 +114,7 @@ export default async function handler(req, res) {
         lastName,
         email,
         tags,
-        locationId,
+        locationId: newLocationId,
       },
       {
         headers: {

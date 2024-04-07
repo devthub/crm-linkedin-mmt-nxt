@@ -18,6 +18,23 @@ import { myLS } from "../utils/ls";
 export default function Home({ user }) {
   // active ripple effect
   PrimeReact.ripple = true;
+  const VISIBLE = "visible";
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === VISIBLE) {
+        // Perform actions when the page becomes visible again
+        // eslint-disable-next-line no-console
+        console.log("Page is visible again");
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   const { userData, setUserData } = useUserContext();
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -27,16 +44,22 @@ export default function Home({ user }) {
   const toast = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingOTP, setIsSubmittingOTP] = useState(false);
+  const [isResubmittingOTP, setIsResubmittingOTP] = useState(false);
 
   const router = useRouter();
   const showMessageToast = (props) => toast.current.show({ ...props });
 
-  const redirectToUserPage = () => {
+  const redirectToUserPage = async () => {
     // router.push(
     //   `/${userData?.user?.user_id || loggedInUser?.user_id}?activation_id=${
     //     userData?.user?.activation_id || loggedInUser.activation_id
     //   }`
     // );
+
+    await handleSendOTP(
+      userData?.user?.activation_id || loggedInUser.activation_id
+    );
+
     router.push(
       `/?email=${userData?.user?.activation_id || loggedInUser.activation_id}`,
       undefined,
@@ -115,6 +138,44 @@ export default function Home({ user }) {
     }
 
     setSubmitting(false);
+  };
+
+  const handleSendOTP = async (email) => {
+    setIsResubmittingOTP(true);
+
+    if (!email) {
+      return showMessageToast({
+        severity: "error",
+        summary: "Failed:",
+        detail: "Please provide email!",
+        life: 3000,
+      });
+    }
+
+    try {
+      const { data } = await axios.post(`/api/v1/send-otp`, { email });
+
+      if (!data.ok) {
+        throw new Error("Error sending OTP!");
+      }
+
+      return showMessageToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Please check your email.",
+        life: 3000,
+      });
+    } catch (error) {
+      console.error("🚀 ~ file: index.jsx:159 ~ handleSendOTP ~ error:", error);
+      return showMessageToast({
+        severity: "error",
+        summary: "Failed:",
+        detail: "There seems to be an error sending OTP.",
+        life: 3000,
+      });
+    } finally {
+      setIsResubmittingOTP(false);
+    }
   };
 
   const handleOTPVerification = async (otpCode) => {
@@ -199,6 +260,8 @@ export default function Home({ user }) {
               showOtpForm={showOtpForm}
               setShowOtpForm={setShowOtpForm}
               isSubmittingOTP={isSubmittingOTP}
+              isResubmittingOTP={isResubmittingOTP}
+              onResendOTP={handleSendOTP}
             />
           </main>
         </div>
@@ -231,6 +294,7 @@ export default function Home({ user }) {
             showOtpForm={showOtpForm}
             setShowOtpForm={setShowOtpForm}
             isSubmittingOTP={isSubmittingOTP}
+            onResendOTP={handleSendOTP}
           />
         </main>
       </div>
@@ -252,7 +316,7 @@ export const getServerSideProps = async (ctx) => {
 
   return {
     props: {
-      user,
+      user: user ?? {},
     },
   };
 };

@@ -1,10 +1,18 @@
 import { useState } from "react";
 
+import { useRouter } from "next/router";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 
-const OtpForm = ({ onVerifyOTP, isSubmittingOTP, setShowOtpForm }) => {
+const OtpForm = ({
+  onVerifyOTP,
+  isSubmittingOTP,
+  setShowOtpForm,
+  onResendOTP,
+  isResubmittingOTP,
+}) => {
   const [otp, setOtp] = useState("");
+  const router = useRouter();
 
   return (
     <form
@@ -16,17 +24,29 @@ const OtpForm = ({ onVerifyOTP, isSubmittingOTP, setShowOtpForm }) => {
     >
       <div className="flex flex-column align-items-center justify-content-center">
         <div className="flex flex-column align-items-center justify-content-center my-2">
-          <h2 className="text-xl"> One-Time Password</h2>
+          <h2 className="text-xl">One-Time Password</h2>
           <p className="text-sm">
             Please enter the 6-digits code we sent to your email
           </p>
         </div>
+
+        <Button
+          className="btn btn-primary mb-4 w-full"
+          type="button"
+          label={"Resend OTP"}
+          loading={isResubmittingOTP}
+          icon="pi pi-send"
+          iconPos="right"
+          onClick={() => onResendOTP(router.query?.email)}
+        />
+
         <OtpInput
           value={otp}
           onChange={(val) => {
             setOtp(val);
           }}
         />
+
         <div
           className="flex align-items-center justify-content-between"
           style={{ width: "100%" }}

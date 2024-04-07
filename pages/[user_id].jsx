@@ -173,14 +173,22 @@ export const getServerSideProps = async (ctx) => {
 
   try {
     const mmtURI = `${mmtAPIBaseUri}/users?page=1&limit=50&activation_id=${query?.activation_id}`;
+
     const mmtRecordExists = await fetch(mmtURI, {
       headers: {
         Authorization: `Bearer ${process.env.MMT_API_KEY}`,
       },
     });
+
     const userData = await mmtRecordExists.json();
+    // eslint-disable-next-line no-console
+    console.log(
+      "🚀 ~ file: [user_id].jsx:184 ~ getServerSideProps ~ userData:",
+      userData
+    );
 
     const userConfigURI = `${mmtAPIBaseUri}/config/${userData.data[0]?.user_id}`;
+
     const invitesURI = `${mmtAPIBaseUri}/invites/${userData.data[0]?.user_id}`;
 
     const [userConfigResponse, invitesResponse] = await Promise.all([
@@ -189,6 +197,7 @@ export const getServerSideProps = async (ctx) => {
           Authorization: `Bearer ${process.env.MMT_API_KEY}`,
         },
       }),
+
       fetch(invitesURI, {
         headers: {
           Authorization: `Bearer ${process.env.MMT_API_KEY}`,
@@ -203,7 +212,7 @@ export const getServerSideProps = async (ctx) => {
 
     return {
       props: {
-        user: userData?.data[0],
+        user: JSON.parse(JSON.stringify(userData?.data[0])),
         userConfig,
         userInvites,
       },
