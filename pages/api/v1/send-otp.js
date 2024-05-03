@@ -10,7 +10,10 @@ async function verifyOtpHandler(req, res) {
   try {
     const [otp] = await Promise.all([sendOTPtoEmail(email), dbConnect()]);
 
-    const user = await User.findOneAndUpdate({ email }, { otp });
+    const user = await User.findOneAndUpdate(
+      { $or: [{ activation_id: email }, { email }] },
+      { otp }
+    );
 
     return res.status(200).json({
       message: "Success",
